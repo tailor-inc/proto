@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message ListMeterRequestCountsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  google.protobuf.Timestamp start_time = 2 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
+  google.protobuf.Duration step = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).duration = {// 1h ~ 24h
+      gte: {seconds: 3600}
+      lte: {seconds: 86400}
+    }
+  ];
+}
+
+message ListMeterRequestCountsResponse {
+  repeated RequestCount request_counts = 1;
+
+  message RequestCount {
+    string application_name = 1;
+    repeated Value values = 2; // count per step
+  }
+
+  message Value {
+    google.protobuf.Timestamp from = 1;
+    google.protobuf.Timestamp to = 2;
+    int64 count = 3;
+  }
+}
+
+message ListMeterExecutionCountsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  google.protobuf.Timestamp start_time = 2 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
+  google.protobuf.Duration step = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).duration = {// 1h ~ 24h
+      gte: {seconds: 3600}
+      lte: {seconds: 86400}
+    }
+  ];
+}
+
+message ListMeterExecutionCountsResponse {
+  repeated ExecutionCount execution_counts = 1;
+
+  message ExecutionCount {
+    string service_name = 1;
+    repeated Value values = 2; // count per step
+  }
+
+  message Value {
+    google.protobuf.Timestamp from = 1;
+    google.protobuf.Timestamp to = 2;
+    int64 count = 3;
+  }
+}
+
+message ListMeterEventCountsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  google.protobuf.Timestamp start_time = 2 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
+  google.protobuf.Duration step = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).duration = {// 1h ~ 24h
+      gte: {seconds: 3600}
+      lte: {seconds: 86400}
+    }
+  ];
+}
+
+message ListMeterEventCountsResponse {
+  repeated EventCount event_counts = 1;
+
+  message EventCount {
+    string service_name = 1;
+    repeated Value values = 2; // count per step
+  }
+
+  message Value {
+    google.protobuf.Timestamp from = 1;
+    google.protobuf.Timestamp to = 2;
+    int64 count = 3;
+  }
+}

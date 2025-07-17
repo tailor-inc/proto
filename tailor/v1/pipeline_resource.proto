@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/v1/auth_resource.proto";
+import "tailor/v1/resource.proto";
+
+message PipelineService {
+  Namespace namespace = 1;
+  string common_sdl = 2;
+}
+
+message PipelineResolver {
+  message Type {
+    string kind = 1;
+    string name = 2;
+    reserved 3;
+    repeated Field fields = 4;
+    bool required = 5;
+    string description = 6;
+    repeated Value allowed_values = 7;
+  }
+
+  message Field {
+    string name = 1;
+    Type type = 2;
+    bool array = 3;
+    bool required = 4;
+    string description = 5;
+  }
+
+  message Value {
+    string value = 1 [
+      (buf.validate.field).string.pattern = "^[a-zA-Z][a-zA-Z0-9_]{0,62}$",
+      (buf.validate.field).string.not_in = "true",
+      (buf.validate.field).string.not_in = "false",
+      (buf.validate.field).string.not_in = "null"
+    ];
+    string description = 2;
+  }
+
+  enum OperationType {
+    OPERATION_TYPE_UNSPECIFIED = 0;
+    OPERATION_TYPE_GRAPHQL = 1;
+    OPERATION_TYPE_FUNCTION = 2;
+  }
+
+  message Pipeline {
+    reserved 1;
+    string name = 2;
+    string description = 3;
+    OperationType operation_type = 4;
+    reserved 5;
+    optional string operation_source = 6;
+    bool skip_operation_on_error = 7;
+    optional string test = 8;
+    optional string pre_validation = 9;
+    optional string pre_script = 10;
+    optional string post_script = 11;
+    optional string post_validation = 12;
+    optional string context_data = 13;
+    optional string for_each = 14;
+    optional AuthInvoker invoker = 15;
+    Script pre_hook = 16;
+    Script post_hook = 17;
+    optional string operation_name = 18;
+    Script operation_hook = 19;
+  }
+
+  reserved 1;
+  string name = 2;
+  string description = 3;
+  string authorization = 4;
+  optional string pre_script = 5;
+  optional string post_script = 6;
+  repeated Pipeline pipelines = 7;
+  optional string on_error = 8;
+  repeated Field inputs = 9;
+  optional Field response = 10;
+  optional string operation_type = 11;
+  Script pre_hook = 12;
+  Script post_hook = 13;
+  bool publish_execution_events = 14;
+  string sdl = 15; // conflict with inputs and response, do not use both
+}
+
+message PipelineResolvers {
+  repeated PipelineResolver resolvers = 1;
+}
+
+message PipelineResolverExecutionResult {
+  string id = 1;
+  string source_execution_id = 2;
+  string resolver_name = 3;
+  enum ResultStatus {
+    RESULT_STATUS_UNSPECIFIED = 0;
+    RESULT_STATUS_DONE = 1;
+    RESULT_STATUS_FAILED = 2;
+    RESULT_STATUS_ABORTED = 3;
+    RESULT_STATUS_RETRIED = 4;
+  }
+  ResultStatus status = 4;
+  google.protobuf.Struct context = 5;
+  google.protobuf.Struct initial_context = 6;
+  string last_pipeline_name = 7;
+  string last_pipeline_action = 8;
+  string error = 9;
+  google.protobuf.Timestamp started_at = 10;
+  google.protobuf.Timestamp finished_at = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}

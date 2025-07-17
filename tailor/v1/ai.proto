@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/ai_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreateAiServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message CreateAiServiceResponse {
+  AiService ai_service = 1;
+}
+
+message ListAiServicesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListAiServicesResponse {
+  repeated AiService ai_services = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message DeleteAiServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAiServiceResponse {}
+
+message GetAiServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAiServiceResponse {
+  AiService ai_service = 1;
+}
+
+message CreateAiTaskRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AiTask task = 3;
+}
+message CreateAiTaskResponse {
+  AiTask task = 1;
+}
+
+message ListAiTasksRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListAiTasksResponse {
+  repeated AiTask tasks = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetAiTaskRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string task_name = 3 [(buf.validate.field).string.pattern = "^[a-z][a-zA-Z0-9]{0,62}$"];
+}
+message GetAiTaskResponse {
+  AiTask task = 1;
+}
+
+message UpdateAiTaskRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string task_name = 3 [(buf.validate.field).string.pattern = "^[a-z][a-zA-Z0-9]{0,62}$"];
+  AiTask task = 4;
+}
+message UpdateAiTaskResponse {
+  AiTask task = 1;
+}
+
+message DeleteAiTaskRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string task_name = 3 [(buf.validate.field).string.pattern = "^[a-z][a-zA-Z0-9]{0,62}$"];
+}
+message DeleteAiTaskResponse {}

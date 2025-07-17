@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/v1/auth_resource.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/secret_manager_resource.proto";
+
+message ExecutorExecutor {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string description = 2;
+  ExecutorTriggerType trigger_type = 3 [(buf.validate.field).enum = {
+    in: [
+      1,
+      2,
+      3
+    ]
+  }];
+  ExecutorTriggerConfig trigger_config = 4 [(buf.validate.field).required = true];
+  ExecutorTargetType target_type = 5 [(buf.validate.field).enum = {
+    in: [
+      1,
+      2,
+      3,
+      4
+    ]
+  }];
+  ExecutorTargetConfig target_config = 6 [(buf.validate.field).required = true];
+  bool disabled = 7;
+}
+
+enum ExecutorTriggerType {
+  EXECUTOR_TRIGGER_TYPE_UNSPECIFIED = 0;
+  EXECUTOR_TRIGGER_TYPE_SCHEDULE = 1;
+  EXECUTOR_TRIGGER_TYPE_EVENT = 2;
+  EXECUTOR_TRIGGER_TYPE_INCOMING_WEBHOOK = 3;
+}
+
+message ExecutorTriggerConfig {
+  oneof config {
+    option (buf.validate.oneof).required = true;
+    ExecutorTriggerScheduleConfig schedule = 1;
+    ExecutorTriggerEventConfig event = 2;
+    ExecutorTriggerIncomingWebhookConfig incoming_webhook = 3;
+  }
+}
+
+message ExecutorTriggerScheduleConfig {
+  string timezone = 1 [(buf.validate.field).string.min_len = 1];
+  string frequency = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+message ExecutorTriggerEventConfig {
+  string event_type = 1 [(buf.validate.field).string.min_len = 1];
+  Script condition = 2;
+}
+
+message ExecutorTriggerIncomingWebhookConfig {
+  string secret = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+enum ExecutorTargetType {
+  EXECUTOR_TARGET_TYPE_UNSPECIFIED = 0;
+  EXECUTOR_TARGET_TYPE_WEBHOOK = 1;
+  EXECUTOR_TARGET_TYPE_TAILOR_GRAPHQL = 2;
+  EXECUTOR_TARGET_TYPE_FUNCTION = 3;
+  EXECUTOR_TARGET_TYPE_JOB_FUNCTION = 4;
+}
+
+message ExecutorTargetConfig {
+  oneof config {
+    option (buf.validate.oneof).required = true;
+    ExecutorWebhookConfig webhook = 1;
+    ExecutorTargetTailorGraphqlConfig tailor_graphql = 2;
+    ExecutorTargetFunctionConfig function = 3;
+  }
+}
+
+message ExecutorWebhookConfig {
+  Script url = 1;
+  SecretValue secret = 2;
+  repeated ExecutorTargetWebhookHeader headers = 3;
+  Script body = 4;
+}
+
+message ExecutorTargetWebhookHeader {
+  string key = 1 [(buf.validate.field).string.min_len = 1];
+  oneof value {
+    option (buf.validate.oneof).required = true;
+    string raw_value = 2 [(buf.validate.field).string.min_len = 1];
+    SecretValue secret_value = 3;
+  }
+}
+
+message ExecutorTargetTailorGraphqlConfig {
+  string app_name = 1 [(buf.validate.field).string.min_len = 1];
+  string query = 2 [(buf.validate.field).string.min_len = 1];
+  Script variables = 3;
+  AuthInvoker invoker = 4;
+}
+
+message ExecutorTargetFunctionConfig {
+  string name = 1 [(buf.validate.field).string.min_len = 1];
+  string script = 2 [(buf.validate.field).string.min_len = 1];
+  Script variables = 3;
+  AuthInvoker invoker = 4;
+}
+
+message ExecutorJob {
+  string id = 1;
+  string executor_name = 2;
+  ExecutorJobStatus status = 3;
+  google.protobuf.Struct actor = 4;
+  google.protobuf.Struct data = 5;
+  string event_idempotency_key = 6;
+  google.protobuf.Timestamp scheduled_at = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message ExecutorJobAttempt {
+  string id = 1;
+  string job_id = 2;
+  ExecutorJobStatus status = 3;
+  string error = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp finished_at = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  string operation_reference = 9;
+}
+
+enum ExecutorJobStatus {
+  EXECUTOR_JOB_STATUS_UNSPECIFIED = 0;
+  EXECUTOR_JOB_STATUS_PENDING = 1;
+  EXECUTOR_JOB_STATUS_RUNNING = 2;
+  EXECUTOR_JOB_STATUS_SUCCESS = 3;
+  EXECUTOR_JOB_STATUS_FAILED = 4;
+  EXECUTOR_JOB_STATUS_CANCELED = 5;
+}
+
+message ExecutorIncomingWebhook {
+  string executor_name = 1;
+  string url = 2;
+  bool disabled = 3;
+}

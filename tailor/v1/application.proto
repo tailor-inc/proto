@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/fieldmask/v1/option.proto";
+import "tailor/v1/application_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreateApplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+  string auth_namespace = 3 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"]; // optional
+  string auth_idp_config_name = 4 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"]; // optional
+  repeated string cors = 5;
+  repeated Subgraph subgraphs = 6;
+  repeated string allowed_ip_addresses = 7;
+  bool disable_introspection = 8;
+  bool disabled = 9;
+}
+message CreateApplicationResponse {
+  Application application = 1;
+}
+
+message UpdateApplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+  string auth_namespace = 3 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"]; // optional
+  string auth_idp_config_name = 4 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"]; // optional
+  repeated string cors = 5;
+  repeated Subgraph subgraphs = 6;
+  repeated string allowed_ip_addresses = 7;
+  bool disable_introspection = 8;
+  bool disabled = 9;
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "disable_introspection",
+    (fieldmask.v1.masks) = "disabled",
+    (fieldmask.v1.masks) = "auth_namespace",
+    (fieldmask.v1.masks) = "auth_idp_config_name",
+    (fieldmask.v1.masks) = "cors",
+    (fieldmask.v1.masks) = "subgraphs",
+    (fieldmask.v1.masks) = "allowed_ip_addresses"
+  ];
+}
+message UpdateApplicationResponse {
+  Application application = 1;
+}
+
+message DeleteApplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+message DeleteApplicationResponse {}
+
+message ListApplicationsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListApplicationsResponse {
+  repeated Application applications = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetApplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+message GetApplicationResponse {
+  Application application = 1;
+}
+
+message GetApplicationSchemaHealthRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+
+message GetApplicationSchemaHealthResponse {
+  ApplicationSchemaHealthStatus status = 1;
+
+  enum ApplicationSchemaHealthStatus {
+    APPLICATION_SCHEMA_HEALTH_STATUS_UNSPECIFIED = 0;
+    APPLICATION_SCHEMA_HEALTH_STATUS_OK = 1;
+    APPLICATION_SCHEMA_HEALTH_STATUS_COMPOSITION_ERROR = 2;
+  }
+
+  // The timestamp of when the current serving schema updated.
+  google.protobuf.Timestamp current_serving_schema_update_time = 2;
+
+  ApplicationSchemaUpdateAttempt last_schema_update_attempt = 3;
+}

@@ -1,0 +1,393 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/v1/auth_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreateAuthServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message CreateAuthServiceResponse {
+  AuthService auth_service = 1;
+}
+
+message DeleteAuthServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAuthServiceResponse {}
+
+message GetAuthServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthServiceResponse {
+  AuthService auth_service = 1;
+}
+
+message ListAuthServicesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListAuthServicesResponse {
+  repeated AuthService auth_services = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateAuthIDPConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthIDPConfig idp_config = 3;
+}
+message CreateAuthIDPConfigResponse {
+  AuthIDPConfig idp_config = 1;
+}
+
+message UpdateAuthIDPConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthIDPConfig idp_config = 3;
+}
+message UpdateAuthIDPConfigResponse {
+  AuthIDPConfig idp_config = 1;
+}
+
+message DeleteAuthIDPConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAuthIDPConfigResponse {}
+
+message GetAuthIDPConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthIDPConfigResponse {
+  AuthIDPConfig idp_config = 1;
+}
+
+message ListAuthIDPConfigsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListAuthIDPConfigsResponse {
+  repeated AuthIDPConfig idp_configs = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateUserProfileConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  UserProfileProviderConfig user_profile_provider_config = 3;
+}
+message CreateUserProfileConfigResponse {
+  UserProfileProviderConfig user_profile_provider_config = 1;
+}
+
+message UpdateUserProfileConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  UserProfileProviderConfig user_profile_provider_config = 3;
+}
+message UpdateUserProfileConfigResponse {
+  UserProfileProviderConfig user_profile_provider_config = 1;
+}
+
+message DeleteUserProfileConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteUserProfileConfigResponse {}
+
+message GetUserProfileConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetUserProfileConfigResponse {
+  UserProfileProviderConfig user_profile_provider_config = 1;
+}
+
+message CreateTenantConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  TenantProviderConfig tenant_provider_config = 3 [(buf.validate.field).required = true];
+}
+message CreateTenantConfigResponse {
+  TenantProviderConfig tenant_provider_config = 1;
+}
+
+message UpdateTenantConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  TenantProviderConfig tenant_provider_config = 3 [(buf.validate.field).required = true];
+}
+message UpdateTenantConfigResponse {
+  TenantProviderConfig tenant_provider_config = 1;
+}
+
+message DeleteTenantConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteTenantConfigResponse {}
+
+message GetTenantConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetTenantConfigResponse {
+  TenantProviderConfig tenant_provider_config = 1;
+}
+
+message CreatePersonalAccessTokenRequest {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated PATScope scopes = 2 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.enum = {
+      defined_only: true
+      not_in: [0]
+    }
+  ];
+}
+message CreatePersonalAccessTokenResponse {
+  string access_token = 1;
+}
+
+message DeletePersonalAccessTokenRequest {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeletePersonalAccessTokenResponse {}
+
+message ListPersonalAccessTokensRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+}
+message ListPersonalAccessTokensResponse {
+  repeated PersonalAccessToken personal_access_tokens = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateAuthMachineUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string auth_namespace = 2 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string attributes = 4 [(buf.validate.field).repeated.items.string.uuid = true];
+  map<string, google.protobuf.Value> attribute_map = 5 [(buf.validate.field).map.keys = {
+    string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+  }];
+}
+message CreateAuthMachineUserResponse {
+  MachineUser machine_user = 1;
+}
+
+message UpdateAuthMachineUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string auth_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string attributes = 4 [(buf.validate.field).repeated.items.string.uuid = true];
+  map<string, google.protobuf.Value> attribute_map = 5 [(buf.validate.field).map.keys = {
+    string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+  }];
+}
+message UpdateAuthMachineUserResponse {
+  MachineUser machine_user = 1;
+}
+
+message DeleteAuthMachineUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string auth_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAuthMachineUserResponse {}
+
+message GetAuthMachineUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string auth_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthMachineUserResponse {
+  MachineUser machine_user = 1;
+}
+
+message ListAuthMachineUsersRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string auth_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListAuthMachineUsersResponse {
+  repeated MachineUser machine_users = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateAuthSCIMConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthSCIMConfig scim_config = 3;
+}
+message CreateAuthSCIMConfigResponse {
+  AuthSCIMConfig scim_config = 1;
+}
+
+message UpdateAuthSCIMConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthSCIMConfig scim_config = 3;
+}
+message UpdateAuthSCIMConfigResponse {
+  AuthSCIMConfig scim_config = 1;
+}
+
+message GetAuthSCIMConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthSCIMConfigResponse {
+  AuthSCIMConfig scim_config = 1;
+}
+
+message DeleteAuthSCIMConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAuthSCIMConfigResponse {}
+
+message CreateAuthSCIMResourceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthSCIMResource scim_resource = 3;
+}
+message CreateAuthSCIMResourceResponse {
+  AuthSCIMResource scim_resource = 1;
+}
+
+message UpdateAuthSCIMResourceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthSCIMResource scim_resource = 3;
+}
+message UpdateAuthSCIMResourceResponse {
+  AuthSCIMResource scim_resource = 1;
+}
+
+message DeleteAuthSCIMResourceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3;
+}
+message DeleteAuthSCIMResourceResponse {}
+
+message GetAuthSCIMResourceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthSCIMResourceResponse {
+  AuthSCIMResource scim_resource = 1;
+}
+
+message GetAuthSCIMResourcesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthSCIMResourcesResponse {
+  repeated AuthSCIMResource scim_resources = 1;
+}
+
+message CreateAuthConnectionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  AuthConnection connection = 2 [(buf.validate.field).required = true];
+}
+message CreateAuthConnectionResponse {}
+
+message ListAuthConnectionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListAuthConnectionsResponse {
+  repeated AuthConnection connections = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message RevokeAuthConnectionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string connection_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message RevokeAuthConnectionResponse {}
+
+message RegisterAuthConnectionSessionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string connection_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string access_token = 3;
+  string refresh_token = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+message RegisterAuthConnectionSessionResponse {}
+
+message CreateAuthOAuth2ClientRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2;
+  AuthOAuth2Client oauth2_client = 3;
+}
+message CreateAuthOAuth2ClientResponse {
+  AuthOAuth2Client oauth2_client = 1;
+}
+
+message UpdateAuthOAuth2ClientRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2;
+  AuthOAuth2Client oauth2_client = 3;
+}
+message UpdateAuthOAuth2ClientResponse {
+  AuthOAuth2Client oauth2_client = 1;
+}
+
+message DeleteAuthOAuth2ClientRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2;
+  string name = 3;
+}
+message DeleteAuthOAuth2ClientResponse {}
+
+message GetAuthOAuth2ClientRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetAuthOAuth2ClientResponse {
+  AuthOAuth2Client oauth2_client = 1;
+}
+
+message ListAuthOAuth2ClientsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2;
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListAuthOAuth2ClientsResponse {
+  repeated AuthOAuth2Client oauth2_clients = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

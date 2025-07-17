@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message Organization {
+  string id = 1;
+  string name = 2;
+
+  google.protobuf.Timestamp create_time = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+enum OrganizationRole {
+  ORGANIZATION_ROLE_UNSPECIFIED = 0;
+  ORGANIZATION_ROLE_ADMIN = 1;
+  ORGANIZATION_ROLE_EDITOR = 2;
+  ORGANIZATION_ROLE_VIEWER = 3;
+}
+
+message OrganizationAccess {
+  string organization_id = 1;
+  OrganizationRole role = 2;
+
+  message PlatformUser {
+    string id = 1;
+    string email = 2;
+  }
+  message Team {
+    string id = 1;
+    string name = 2;
+  }
+
+  oneof member {
+    Team team = 3;
+    PlatformUser platform_user = 4;
+  }
+}
+
+message Folder {
+  string id = 1;
+  string name = 2;
+  string organization_id = 3;
+  string parent_folder_id = 4; // NOTE: can be empty = top level folder in organization
+  bool has_children = 7;
+
+  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+enum FolderRole {
+  FOLDER_ROLE_UNSPECIFIED = 0;
+  FOLDER_ROLE_ADMIN = 1;
+  FOLDER_ROLE_EDITOR = 2;
+  FOLDER_ROLE_VIEWER = 3;
+}
+
+message FolderAccess {
+  string folder_id = 1;
+  FolderRole role = 2;
+
+  message PlatformUser {
+    string id = 1;
+    string email = 2;
+  }
+  message Team {
+    string id = 1;
+    string name = 2;
+  }
+
+  oneof member {
+    Team team = 3;
+    PlatformUser platform_user = 4;
+  }
+}
+
+message Team {
+  string id = 1;
+  string name = 2;
+  string organization_id = 3;
+
+  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message TeamMember {
+  string team_id = 1;
+  message PlatformUser {
+    string user_id = 1;
+    string email = 2;
+  }
+  PlatformUser platform_user = 2;
+  TeamRole role = 3;
+}
+
+enum TeamRole {
+  TEAM_ROLE_UNSPECIFIED = 0;
+  TEAM_ROLE_ADMIN = 1;
+  TEAM_ROLE_MANAGER = 2;
+  TEAM_ROLE_MEMBER = 3;
+}
+
+message Workspace {
+  string id = 1;
+  string name = 2;
+  string create_user_id = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string update_user_id = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  reserved 7;
+  string region = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+  bool delete_protection = 9;
+  string organization_id = 10;
+  string folder_id = 11;
+}
+
+message WorkspacePlatformUser {
+  WorkspacePlatformUserRole role = 1;
+  PlatformUser platform_user = 2;
+
+  message PlatformUser {
+    string user_id = 1;
+    string email = 2;
+  }
+}
+
+enum WorkspacePlatformUserRole {
+  WORKSPACE_PLATFORM_USER_ROLE_UNSPECIFIED = 0;
+  WORKSPACE_PLATFORM_USER_ROLE_ADMIN = 1;
+  WORKSPACE_PLATFORM_USER_ROLE_EDITOR = 2;
+  WORKSPACE_PLATFORM_USER_ROLE_VIEWER = 3;
+}
+
+message PlatformAccountPlan {
+  PlatformAccountPlanType plan_type = 1;
+  oneof plan_meta {
+    PlatformAccountPlanTrial trial = 2;
+  }
+  message PlatformAccountPlanTrial {
+    google.protobuf.Timestamp start_at = 1;
+    google.protobuf.Timestamp end_at = 2;
+    bool is_expired = 3;
+  }
+}
+
+enum PlatformAccountPlanType {
+  PLATFORM_ACCOUNT_PLAN_TYPE_UNSPECIFIED = 0;
+  PLATFORM_ACCOUNT_PLAN_TYPE_TRIAL = 1;
+  PLATFORM_ACCOUNT_PLAN_TYPE_BASIC = 2;
+}

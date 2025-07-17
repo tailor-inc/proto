@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/events_resource.proto";
+import "tailor/v1/resource.proto";
+
+message ListDataplaneEventsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+message ListDataplaneEventsResponse {
+  string next_page_token = 1;
+  repeated DataplaneEvent events = 2;
+  int64 total_count = 3;
+}
+
+message ListControlplaneActivityLogsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+message ListControlplaneActivityLogsResponse {
+  string next_page_token = 1;
+  repeated ControlplaneActivityLog logs = 2;
+  int64 total_count = 3;
+}

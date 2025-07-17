@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+message FunctionExecution {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string workspace_id = 2 [(buf.validate.field).string.uuid = true];
+  string script_name = 3;
+  Status status = 4;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_SUCCESS = 1;
+    STATUS_FAILED = 2;
+    STATUS_RUNNING = 3;
+  }
+  string logs = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp finished_at = 7;
+  Type type = 8 [(buf.validate.field).enum = {
+    in: [
+      1,
+      2
+    ]
+  }];
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_STANDARD = 1;
+    TYPE_JOB = 2;
+  }
+  string result = 9;
+}

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/stateflow_resource.proto";
+
+message CreateStateflowServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string admin_user_ids = 3 [(buf.validate.field).repeated.items.string.uuid = true];
+}
+message CreateStateflowServiceResponse {
+  StateflowService stateflow_service = 1;
+}
+
+message UpdateStateflowServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string admin_user_ids = 3 [(buf.validate.field).repeated.items.string.uuid = true];
+}
+message UpdateStateflowServiceResponse {
+  StateflowService stateflow_service = 1;
+}
+
+message DeleteStateflowServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteStateflowServiceResponse {}
+
+message GetStateflowServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetStateflowServiceResponse {
+  StateflowService stateflow_service = 1;
+}
+
+message ListStateflowServicesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListStateflowServicesResponse {
+  repeated StateflowService stateflow_services = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

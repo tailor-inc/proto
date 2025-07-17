@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "tailor/v1/resource.proto";
+
+message StateflowService {
+  Namespace namespace = 1;
+  repeated AdminUser admin_users = 2;
+
+  message AdminUser {
+    string user_id = 1;
+  }
+}

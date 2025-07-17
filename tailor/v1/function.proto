@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/auth_resource.proto";
+import "tailor/v1/function_resource.proto";
+import "tailor/v1/resource.proto";
+
+message TestExecScriptRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2;
+  string code = 3;
+  optional string arg = 4;
+  AuthInvoker invoker = 5;
+  reserved 6; // bool tail = 6;
+}
+message TestExecScriptResponse {
+  string result = 1;
+  reserved 2; // optional string log = 2;
+  string execution_id = 3 [(buf.validate.field).string.uuid = true];
+}
+
+message GetFunctionExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetFunctionExecutionResponse {
+  FunctionExecution execution = 1;
+}
+
+message ListFunctionExecutionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+message ListFunctionExecutionsResponse {
+  repeated FunctionExecution executions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

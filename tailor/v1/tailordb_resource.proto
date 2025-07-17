@@ -1,0 +1,269 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/struct.proto";
+import "tailor/v1/resource.proto";
+
+message TailorDBService {
+  Namespace namespace = 1;
+  string default_timezone = 2;
+}
+
+message TailorDBType {
+  string name = 1 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+  TypeConfig schema = 2;
+
+  message TypeConfig {
+    map<string, FieldConfig> fields = 1;
+    string description = 2;
+    TypeSetting settings = 3;
+    TypePermission type_permission = 4;
+    bool extends = 5;
+    repeated Directive directives = 6;
+    map<string, Index> indexes = 7;
+    optional RecordPermission record_permission = 8;
+    map<string, RelationshipConfig> relationships = 9;
+    Permission permission = 10;
+  }
+
+  message TypeSetting {
+    reserved 1;
+    bool aggregation = 2;
+    bool bulk_upsert = 3;
+    optional int64 default_query_limit_size = 4;
+    optional int64 max_bulk_upsert_size = 5;
+    optional string plural_form = 6 [
+      (buf.validate.field).string.pattern = "^$|^[a-z][a-zA-Z0-9]{0,62}$",
+      (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    ];
+    bool publish_record_events = 7;
+    bool draft = 8;
+  }
+
+  message Directive {
+    string name = 1;
+    repeated DirectiveArg args = 2;
+  }
+
+  message DirectiveArg {
+    string name = 1;
+    string value = 2;
+  }
+
+  message Index {
+    repeated string field_names = 1;
+    bool unique = 2;
+  }
+
+  message FieldConfig {
+    string type = 1;
+    reserved 2;
+    string description = 3;
+    optional string source_id = 4;
+    bool required = 5;
+    bool array = 6;
+    repeated ValidateConfig validate = 7;
+    map<string, FieldConfig> fields = 8;
+    bool index = 9;
+    bool unique = 10;
+    bool foreign_key = 11;
+    optional string foreign_key_type = 12;
+    optional string foreign_key_field = 13;
+    optional FieldHook hooks = 14;
+    repeated Value allowed_values = 15;
+    bool vector = 16;
+    Serial serial = 17;
+  }
+
+  message RelationshipConfig {
+    string ref_type = 1;
+    string ref_field = 2;
+    string src_field = 3;
+    bool array = 4;
+    string description = 5;
+  }
+
+  message Value {
+    string value = 1 [
+      (buf.validate.field).string.pattern = "^[a-zA-Z][a-zA-Z0-9_]{0,62}$",
+      (buf.validate.field).string.not_in = "true",
+      (buf.validate.field).string.not_in = "false",
+      (buf.validate.field).string.not_in = "null"
+    ];
+    string description = 2;
+  }
+
+  message FieldHook {
+    optional string create_expr = 1;
+    optional string update_expr = 2;
+    Script create = 3;
+    Script update = 4;
+  }
+
+  message Serial {
+    int64 start = 1 [(buf.validate.field).int64.gt = 0];
+    optional int64 max_value = 2 [(buf.validate.field).int64.gt = 0];
+    optional string format = 3 [(buf.validate.field).string = {
+      pattern: "^(?:(?:%%|[^%])*)%(?:[0-9]+)?[doxX](?:(?:%%|[^%])*)$"
+      max_len: 32
+    }];
+  }
+
+  message ValidateConfig {
+    string expr = 1;
+    PermitAction action = 2 [(buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }];
+    optional string error_message = 3;
+    Script script = 4;
+  }
+
+  message TypePermission {
+    repeated PermissionItem create = 1;
+    repeated PermissionItem read = 2;
+    repeated PermissionItem update = 3;
+    repeated PermissionItem delete = 4;
+    repeated PermissionItem admin = 5;
+  }
+
+  message RecordPermission {
+    repeated PermissionItem read = 1;
+    repeated PermissionItem update = 2;
+    repeated PermissionItem delete = 3;
+  }
+
+  message PermissionItem {
+    PermitAction permit = 1 [(buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }];
+    string id = 2;
+    repeated string ids = 3;
+  }
+
+  enum PermitAction {
+    PERMIT_ACTION_UNSPECIFIED = 0;
+    PERMIT_ACTION_ALLOW = 1;
+    PERMIT_ACTION_SKIP = 2 [deprecated = true];
+    PERMIT_ACTION_DENY = 3;
+  }
+
+  message Permission {
+    repeated Policy create = 1;
+    repeated Policy read = 2;
+    repeated Policy update = 3;
+    repeated Policy delete = 4;
+
+    message Policy {
+      repeated Condition conditions = 1;
+      Permit permit = 2 [(buf.validate.field).enum = {
+        defined_only: true
+        not_in: [0]
+      }];
+      optional string description = 3;
+    }
+
+    message Condition {
+      Operand left = 1 [(buf.validate.field).required = true];
+      Operator operator = 2 [(buf.validate.field).enum = {
+        defined_only: true
+        not_in: [0]
+      }];
+      Operand right = 3 [(buf.validate.field).required = true];
+    }
+
+    message Operand {
+      oneof kind {
+        option (buf.validate.oneof).required = true;
+        string user_field = 1 [(buf.validate.field).string.min_len = 1];
+        string record_field = 2 [(buf.validate.field).string.min_len = 1];
+        string old_record_field = 3 [(buf.validate.field).string.min_len = 1];
+        string new_record_field = 4 [(buf.validate.field).string.min_len = 1];
+        google.protobuf.Value value = 5;
+      }
+    }
+
+    enum Operator {
+      OPERATOR_UNSPECIFIED = 0;
+      OPERATOR_EQ = 1;
+      OPERATOR_NE = 2;
+      OPERATOR_IN = 3;
+      OPERATOR_NIN = 4;
+    }
+
+    enum Permit {
+      PERMIT_UNSPECIFIED = 0;
+      PERMIT_ALLOW = 1;
+      PERMIT_DENY = 2;
+    }
+  }
+}
+
+message TailorDBGQLPermission {
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  repeated Policy policies = 2;
+
+  message Policy {
+    repeated Condition conditions = 1;
+    repeated Action actions = 2 [(buf.validate.field).repeated = {
+      min_items: 1
+      items: {
+        enum: {
+          defined_only: true
+          not_in: [0]
+        }
+      }
+    }];
+    Permit permit = 3 [(buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }];
+    optional string description = 4;
+  }
+
+  message Condition {
+    Operand left = 1 [(buf.validate.field).required = true];
+    Operator operator = 2 [(buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }];
+    Operand right = 3 [(buf.validate.field).required = true];
+  }
+
+  message Operand {
+    oneof kind {
+      option (buf.validate.oneof).required = true;
+      string user_field = 1 [(buf.validate.field).string.min_len = 1];
+      google.protobuf.Value value = 5;
+    }
+  }
+
+  enum Operator {
+    OPERATOR_UNSPECIFIED = 0;
+    OPERATOR_EQ = 1;
+    OPERATOR_NE = 2;
+    OPERATOR_IN = 3;
+    OPERATOR_NIN = 4;
+  }
+
+  enum Action {
+    ACTION_UNSPECIFIED = 0;
+    ACTION_ALL = 1;
+    ACTION_CREATE = 2;
+    ACTION_READ = 3;
+    ACTION_UPDATE = 4;
+    ACTION_DELETE = 5;
+    ACTION_AGGREGATE = 6;
+    ACTION_BULK_UPSERT = 7;
+  }
+
+  enum Permit {
+    PERMIT_UNSPECIFIED = 0;
+    PERMIT_ALLOW = 1;
+    PERMIT_DENY = 2;
+  }
+}

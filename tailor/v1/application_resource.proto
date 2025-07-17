@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message Application {
+  string name = 1;
+  string domain = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string auth_namespace = 3;
+  repeated string cors = 4;
+  repeated string allowed_ip_addresses = 11;
+  repeated Subgraph subgraphs = 5;
+
+  string create_user_id = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string update_user_id = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp create_time = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // The base URL of the application
+  string url = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  bool disable_introspection = 12;
+  bool disabled = 13;
+
+  string auth_idp_config_name = 14 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"];
+}
+
+message ApplicationSchemaUpdateAttempt {
+  // The timestamp of when the schema update attempted.
+  google.protobuf.Timestamp attempt_time = 1;
+
+  // The result of the schema update attempted.
+  ApplicationSchemaUpdateAttemptStatus status = 2;
+
+  // The error (reason) of the schema update failed. (empty if it succeeded)
+  string error = 3;
+}
+
+enum ApplicationSchemaUpdateAttemptStatus {
+  APPLICATION_SCHEMA_UPDATE_ATTEMPT_STATUS_UNSPECIFIED = 0;
+  APPLICATION_SCHEMA_UPDATE_ATTEMPT_STATUS_SUCCEEDED = 1;
+  APPLICATION_SCHEMA_UPDATE_ATTEMPT_STATUS_FAILED = 2;
+}
+
+message Subgraph {
+  ServiceType service_type = 1;
+  string service_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+
+  enum ServiceType {
+    SERVICE_TYPE_UNSPECIFIED = 0;
+    SERVICE_TYPE_PIPELINE = 1;
+    SERVICE_TYPE_STATEFLOW = 2;
+    SERVICE_TYPE_TAILORDB = 3;
+    SERVICE_TYPE_AUTH = 4;
+    SERVICE_TYPE_AI = 5;
+    SERVICE_TYPE_IDP = 6;
+  }
+}

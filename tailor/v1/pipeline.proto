@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/pipeline_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreatePipelineServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string common_sdl = 3;
+}
+message CreatePipelineServiceResponse {
+  PipelineService pipeline_service = 1;
+}
+
+message UpdatePipelineServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string common_sdl = 3;
+}
+message UpdatePipelineServiceResponse {
+  PipelineService pipeline_service = 1;
+}
+
+message DeletePipelineServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeletePipelineServiceResponse {}
+
+message GetPipelineServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetPipelineServiceResponse {
+  PipelineService pipeline_service = 1;
+}
+
+message ListPipelineServicesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+
+message ListPipelineServicesResponse {
+  repeated PipelineService pipeline_services = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreatePipelineResolverRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  PipelineResolver pipeline_resolver = 3;
+}
+message CreatePipelineResolverResponse {
+  PipelineResolver pipeline_resolver = 1;
+}
+
+message UpdatePipelineResolverRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  PipelineResolver pipeline_resolver = 3;
+}
+message UpdatePipelineResolverResponse {
+  PipelineResolver pipeline_resolver = 1;
+}
+
+message DeletePipelineResolverRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string resolver_name = 3;
+}
+message DeletePipelineResolverResponse {}
+
+message ComposePipelineSDLRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message ComposePipelineSDLResponse {}
+
+message GetPipelineResolverRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string resolver_name = 3;
+}
+message GetPipelineResolverResponse {
+  PipelineResolver pipeline_resolver = 1;
+}
+
+message ListPipelineResolversRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 4 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  PipelineResolverView pipeline_resolver_view = 5;
+  Filter filter = 6;
+  PageDirection page_direction = 7;
+}
+
+enum PipelineResolverView {
+  PIPELINE_RESOLVER_VIEW_UNSPECIFIED = 0;
+  PIPELINE_RESOLVER_VIEW_BASIC = 1;
+  PIPELINE_RESOLVER_VIEW_FULL = 2;
+}
+
+message ListPipelineResolversResponse {
+  string next_page_token = 1;
+  repeated PipelineResolver pipeline_resolvers = 2;
+  int64 total_count = 3;
+}
+
+message ListPipelineResolverExecutionResultsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 4;
+  string resolver_name = 5;
+  PageDirection page_direction = 6;
+  Filter filter = 7;
+  PipelineResolverExecutionResultView view = 8;
+}
+
+enum PipelineResolverExecutionResultView {
+  PIPELINE_RESOLVER_EXECUTION_RESULT_VIEW_UNSPECIFIED = 0;
+  PIPELINE_RESOLVER_EXECUTION_RESULT_VIEW_BASIC = 1;
+  PIPELINE_RESOLVER_EXECUTION_RESULT_VIEW_FULL = 2;
+}
+
+message ListPipelineResolverExecutionResultsResponse {
+  repeated PipelineResolverExecutionResult results = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetPipelineResolverExecutionResultRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string result_id = 2 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetPipelineResolverExecutionResultResponse {
+  PipelineResolverExecutionResult result = 1;
+}
+
+message RestartPipelineResolverRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string result_id = 3 [(buf.validate.field).string.uuid = true];
+  bool start_from_failed = 4;
+}
+
+message RestartPipelineResolverResponse {
+  PipelineResolverExecutionResult result = 1;
+}

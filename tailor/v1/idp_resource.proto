@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/api/field_behavior.proto";
+import "tailor/v1/resource.proto";
+
+message IdPService {
+  Namespace namespace = 1;
+  string authorization = 2;
+  string provider_url = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message IdPClient {
+  string name = 1;
+  string client_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string client_secret = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+}

@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
+import "tailor/fieldmask/v1/option.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/tailordb_resource.proto";
+
+message ComposeTailorDBSDLRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message ComposeTailorDBSDLResponse {}
+
+message CreateTailorDBServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string default_timezone = 3 [(buf.validate.field).string.max_len = 32];
+}
+message CreateTailorDBServiceResponse {
+  TailorDBService tailordb_service = 1;
+}
+
+message UpdateTailorDBServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string default_timezone = 3 [(buf.validate.field).string.max_len = 32];
+}
+message UpdateTailorDBServiceResponse {
+  TailorDBService tailordb_service = 1;
+}
+
+message DeleteTailorDBServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteTailorDBServiceResponse {}
+
+message GetTailorDBServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetTailorDBServiceResponse {
+  TailorDBService tailordb_service = 1;
+}
+
+message ListTailorDBServicesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListTailorDBServicesResponse {
+  repeated TailorDBService tailordb_services = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateTailorDBTypeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  TailorDBType tailordb_type = 3;
+}
+message CreateTailorDBTypeResponse {
+  TailorDBType tailordb_type = 1;
+}
+message UpdateTailorDBTypeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  TailorDBType tailordb_type = 3;
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "fields",
+    (fieldmask.v1.masks) = "relationships",
+    (fieldmask.v1.masks) = "description",
+    (fieldmask.v1.masks) = "settings",
+    (fieldmask.v1.masks) = "settings.aggregation",
+    (fieldmask.v1.masks) = "settings.bulk_upsert",
+    (fieldmask.v1.masks) = "settings.default_query_limit_size",
+    (fieldmask.v1.masks) = "settings.max_bulk_upsert_size",
+    (fieldmask.v1.masks) = "settings.plural_form",
+    (fieldmask.v1.masks) = "settings.publish_record_events",
+    (fieldmask.v1.masks) = "settings.draft",
+    (fieldmask.v1.masks) = "type_permission",
+    (fieldmask.v1.masks) = "type_permission.create",
+    (fieldmask.v1.masks) = "type_permission.read",
+    (fieldmask.v1.masks) = "type_permission.update",
+    (fieldmask.v1.masks) = "type_permission.delete",
+    (fieldmask.v1.masks) = "type_permission.admin",
+    (fieldmask.v1.masks) = "extends",
+    (fieldmask.v1.masks) = "directives",
+    (fieldmask.v1.masks) = "indexes",
+    (fieldmask.v1.masks) = "record_permission",
+    (fieldmask.v1.masks) = "record_permission.read",
+    (fieldmask.v1.masks) = "record_permission.update",
+    (fieldmask.v1.masks) = "record_permission.delete"
+  ];
+}
+message UpdateTailorDBTypeResponse {
+  TailorDBType tailordb_type = 1;
+}
+message DeleteTailorDBTypeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string tailordb_type_name = 3;
+}
+message DeleteTailorDBTypeResponse {}
+
+message TruncateTailorDBTypeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string tailordb_type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+}
+message TruncateTailorDBTypeResponse {}
+
+message TruncateTailorDBTypesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message TruncateTailorDBTypesResponse {}
+
+message ListTailorDBTypesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  Filter filter = 5;
+  PageDirection page_direction = 6;
+}
+
+message ListTailorDBTypesResponse {
+  repeated TailorDBType tailordb_types = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetTailorDBTypeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string tailordb_type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+}
+message GetTailorDBTypeResponse {
+  TailorDBType tailordb_type = 1;
+}
+
+message CreateTailorDBGQLPermissionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+  TailorDBGQLPermission permission = 4 [(buf.validate.field).required = true];
+}
+message CreateTailorDBGQLPermissionResponse {
+  TailorDBGQLPermission permission = 1;
+}
+
+message GetTailorDBGQLPermissionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+}
+message GetTailorDBGQLPermissionResponse {
+  TailorDBGQLPermission permission = 1;
+}
+
+message ListTailorDBGQLPermissionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListTailorDBGQLPermissionsResponse {
+  repeated TailorDBGQLPermissionWithTypeName permissions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+
+  message TailorDBGQLPermissionWithTypeName {
+    string type_name = 1;
+    TailorDBGQLPermission permission = 2;
+  }
+}
+
+message UpdateTailorDBGQLPermissionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+  TailorDBGQLPermission permission = 4 [(buf.validate.field).required = true];
+}
+message UpdateTailorDBGQLPermissionResponse {
+  TailorDBGQLPermission permission = 1;
+}
+
+message DeleteTailorDBGQLPermissionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+}
+message DeleteTailorDBGQLPermissionResponse {}

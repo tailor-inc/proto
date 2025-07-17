@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+message DataplaneEvent {
+  string idempotency_key = 1;
+  string workspace_id = 2;
+  string event_type = 3;
+  string actor_id = 4;
+  google.protobuf.Struct data = 5;
+  google.protobuf.Timestamp time = 6;
+}
+
+message ControlplaneActivityLog {
+  string idempotency_key = 1;
+  string workspace_id = 2;
+  string actor_id = 3;
+  string resource = 4;
+  string action = 5;
+  string identifier = 6;
+  google.protobuf.Timestamp operated_at = 7;
+}

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
+
+message Service {
+  Namespace namespace = 1;
+  ServiceType service_type = 2;
+
+  enum ServiceType {
+    SERVICE_TYPE_UNSPECIFIED = 0;
+    SERVICE_TYPE_TAILORDB = 1;
+    SERVICE_TYPE_AUTH = 2;
+    SERVICE_TYPE_PIPELINE = 3;
+    SERVICE_TYPE_STATEFLOW = 4;
+    SERVICE_TYPE_AI = 5;
+    SERVICE_TYPE_IDP = 6;
+  }
+}
+
+message Namespace {
+  string name = 1;
+}
+
+message Script {
+  string expr = 1;
+}
+
+enum PageDirection {
+  PAGE_DIRECTION_UNSPECIFIED = 0;
+  PAGE_DIRECTION_ASC = 1;
+  PAGE_DIRECTION_DESC = 2;
+}
+
+message Filter {
+  Condition condition = 1;
+  repeated Filter and = 2;
+  repeated Filter or = 3;
+}
+
+message Condition {
+  string field = 1;
+  Condition.Operator operator = 2 [(buf.validate.field).enum = {
+    // Don't allow undefined or unspecified values.
+    defined_only: true
+    not_in: [0]
+  }];
+  google.protobuf.Value value = 3;
+
+  enum Operator {
+    OPERATOR_UNSPECIFIED = 0;
+    OPERATOR_EQ = 1;
+    OPERATOR_CONTAINS = 2;
+    OPERATOR_GT = 3;
+    OPERATOR_GE = 4;
+    OPERATOR_LT = 5;
+    OPERATOR_LE = 6;
+    OPERATOR_NOT_CONTAINS = 7;
+  }
+}

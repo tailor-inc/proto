@@ -1,0 +1,494 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
+import "tailor/fieldmask/v1/option.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/workspace_resource.proto";
+
+message ListAvailableWorkspaceRegionsRequest {}
+message ListAvailableWorkspaceRegionsResponse {
+  repeated string regions = 1;
+}
+
+message CreateWorkspaceRequest {
+  string workspace_name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string workspace_region = 2;
+  string organization_id = 3 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  string folder_id = 4 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  bool delete_protection = 5;
+}
+message CreateWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message UpdateWorkspaceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workspace_name = 2 [
+    (buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$",
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  string organization_id = 3 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  string folder_id = 4 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  bool delete_protection = 5;
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "workspace_name",
+    (fieldmask.v1.masks) = "organization_id",
+    (fieldmask.v1.masks) = "folder_id",
+    (fieldmask.v1.masks) = "delete_protection"
+  ];
+}
+message UpdateWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message DeleteWorkspaceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message DeleteWorkspaceResponse {}
+
+message ListWorkspacesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+  View view = 4 [
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED,
+    (buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }
+  ];
+
+  enum View {
+    VIEW_UNSPECIFIED = 0;
+    VIEW_ALL = 1;
+    VIEW_PERSONAL = 2;
+  }
+}
+message ListWorkspacesResponse {
+  repeated Workspace workspaces = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListOrganizationWorkspacesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+  string folder_id = 5 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+}
+
+message ListOrganizationWorkspacesResponse {
+  string next_page_token = 1;
+  int64 total_count = 2;
+  repeated Workspace workspaces = 3;
+}
+
+message RestoreWorkspaceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message RestoreWorkspaceResponse {}
+
+message GetWorkspaceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkspaceResponse {
+  Workspace workspace = 1;
+}
+
+message ListWorkspacePlatformUsersRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  PageDirection page_direction = 4;
+}
+message ListWorkspacePlatformUsersResponse {
+  string next_page_token = 1;
+  repeated WorkspacePlatformUser workspace_platform_users = 2;
+  int64 total_count = 3;
+}
+
+message ListAvailableWorkspacePlatformUserRolesRequest {}
+message ListAvailableWorkspacePlatformUserRolesResponse {
+  repeated WorkspacePlatformUserRole roles = 1;
+}
+
+message InviteWorkspacePlatformUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string email = 2 [(buf.validate.field).string.email = true];
+  WorkspacePlatformUserRole role = 3;
+}
+message InviteWorkspacePlatformUserResponse {}
+
+message RemoveWorkspacePlatformUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string email = 2 [(buf.validate.field).string.email = true];
+}
+message RemoveWorkspacePlatformUserResponse {}
+
+message UpdateWorkspacePlatformUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string email = 2 [(buf.validate.field).string.email = true];
+  WorkspacePlatformUserRole role = 3;
+}
+message UpdateWorkspacePlatformUserResponse {}
+
+message GetWorkspacePlatformUserRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkspacePlatformUserResponse {
+  WorkspacePlatformUser workspace_platform_user = 1;
+}
+
+message GetWorkspaceRoleRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkspaceRoleResponse {
+  WorkspacePlatformUserRole role = 1;
+}
+
+message UpdateOrganizationRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string organization_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message UpdateOrganizationResponse {
+  Organization organization = 1;
+}
+
+message GetOrganizationRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetOrganizationResponse {
+  Organization organization = 1;
+}
+
+message ListOrganizationsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+}
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListUserOrganizationsRequest {}
+message ListUserOrganizationsResponse {
+  message UserOrganization {
+    string organization_id = 1;
+    string organization_name = 2;
+    string root_folder_id = 3;
+    string root_folder_name = 4;
+    string display_name = 5;
+  }
+  repeated UserOrganization user_organizations = 1;
+}
+
+message GrantOrganizationAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  OrganizationRole role = 2 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 3 [(buf.validate.field).string.uuid = true];
+    string email = 4 [(buf.validate.field).string.email = true];
+  }
+}
+message GrantOrganizationAccessResponse {}
+
+message UpdateOrganizationAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  OrganizationRole role = 2 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 3 [(buf.validate.field).string.uuid = true];
+    string email = 4 [(buf.validate.field).string.email = true];
+  }
+}
+message UpdateOrganizationAccessResponse {}
+
+message RevokeOrganizationAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 2 [(buf.validate.field).string.uuid = true];
+    string email = 3 [(buf.validate.field).string.email = true];
+  }
+}
+message RevokeOrganizationAccessResponse {}
+
+message ListOrganizationAccessesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationAccessesResponse {
+  repeated OrganizationAccess organization_accesses = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetOrganizationAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 2 [(buf.validate.field).string.uuid = true];
+    string email = 3 [(buf.validate.field).string.email = true];
+  }
+}
+message GetOrganizationAccessResponse {
+  OrganizationAccess organization_access = 1;
+}
+
+message CreateOrganizationFolderRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string parent_folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  string folder_name = 3 [(buf.validate.field).string.min_len = 1];
+}
+message CreateOrganizationFolderResponse {
+  Folder folder = 1;
+}
+
+message UpdateOrganizationFolderRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  string parent_folder_id = 3 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+  string folder_name = 4 [(buf.validate.field).string.min_len = 1];
+}
+message UpdateOrganizationFolderResponse {
+  Folder folder = 1;
+}
+
+message DeleteOrganizationFolderRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message DeleteOrganizationFolderResponse {}
+
+message GetOrganizationFolderRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetOrganizationFolderResponse {
+  Folder folder = 1;
+}
+
+message ListOrganizationFoldersRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+  string parent_folder_id = 5 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
+}
+message ListOrganizationFoldersResponse {
+  string next_page_token = 1;
+  int64 total_count = 2;
+  repeated Folder folders = 3;
+}
+
+message GrantOrganizationFolderAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  FolderRole role = 3 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 4 [(buf.validate.field).string.uuid = true];
+    string email = 5 [(buf.validate.field).string.email = true];
+  }
+}
+message GrantOrganizationFolderAccessResponse {}
+
+message UpdateOrganizationFolderAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  FolderRole role = 3 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 4 [(buf.validate.field).string.uuid = true];
+    string email = 5 [(buf.validate.field).string.email = true];
+  }
+}
+message UpdateOrganizationFolderAccessResponse {}
+
+message RevokeOrganizationFolderAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 3 [(buf.validate.field).string.uuid = true];
+    string email = 4 [(buf.validate.field).string.email = true];
+  }
+}
+message RevokeOrganizationFolderAccessResponse {}
+
+message ListOrganizationFolderAccessesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+  string folder_id = 5 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationFolderAccessesResponse {
+  repeated FolderAccess folder_accesses = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetOrganizationFolderAccessRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  oneof member {
+    option (buf.validate.oneof).required = true;
+    string team_id = 3 [(buf.validate.field).string.uuid = true];
+    string email = 4 [(buf.validate.field).string.email = true];
+  }
+}
+message GetOrganizationFolderAccessResponse {
+  FolderAccess folder_access = 1;
+}
+
+message CreateOrganizationTeamRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_name = 2 [(buf.validate.field).string.min_len = 1];
+}
+message CreateOrganizationTeamResponse {
+  Team team = 1;
+}
+
+message UpdateOrganizationTeamRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+  string team_name = 3 [(buf.validate.field).string.min_len = 1];
+}
+message UpdateOrganizationTeamResponse {
+  Team team = 1;
+}
+
+message DeleteOrganizationTeamRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message DeleteOrganizationTeamResponse {}
+
+message ListOrganizationTeamsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationTeamsResponse {
+  repeated Team teams = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetOrganizationTeamRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetOrganizationTeamResponse {
+  Team team = 1;
+}
+
+message AddOrganizationTeamMemberRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+  string email = 3 [(buf.validate.field).string.email = true];
+  TeamRole role = 4 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+}
+message AddOrganizationTeamMemberResponse {}
+
+message UpdateOrganizationTeamMemberRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+  string email = 3 [(buf.validate.field).string.email = true];
+  TeamRole role = 4 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+}
+message UpdateOrganizationTeamMemberResponse {}
+
+message RemoveOrganizationTeamMemberRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+  string email = 3 [(buf.validate.field).string.email = true];
+}
+message RemoveOrganizationTeamMemberResponse {}
+
+message ListOrganizationTeamMembersRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+  string team_id = 5 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationTeamMembersResponse {
+  repeated TeamMember team_members = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetOrganizationTeamMemberRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string team_id = 2 [(buf.validate.field).string.uuid = true];
+  string email = 3 [(buf.validate.field).string.email = true];
+}
+message GetOrganizationTeamMemberResponse {
+  TeamMember team_member = 1;
+}
+
+message GetPlatformAccountPlanRequest {}
+message GetPlatformAccountPlanResponse {
+  PlatformAccountPlan current_plan = 1;
+}

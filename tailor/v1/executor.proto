@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/executor_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreateExecutorExecutorRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  ExecutorExecutor executor = 2 [(buf.validate.field).required = true];
+}
+message CreateExecutorExecutorResponse {
+  ExecutorExecutor executor = 1;
+}
+
+message UpdateExecutorExecutorRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  ExecutorExecutor executor = 2 [(buf.validate.field).required = true];
+}
+message UpdateExecutorExecutorResponse {
+  ExecutorExecutor executor = 1;
+}
+
+message GetExecutorExecutorRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetExecutorExecutorResponse {
+  ExecutorExecutor executor = 1;
+}
+
+message DeleteExecutorExecutorRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteExecutorExecutorResponse {}
+
+message ListExecutorExecutorsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+
+message ListExecutorExecutorsResponse {
+  repeated ExecutorExecutor executors = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetExecutorJobRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string executor_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string job_id = 3 [(buf.validate.field).string.uuid = true];
+}
+message GetExecutorJobResponse {
+  ExecutorJob job = 1;
+}
+
+message ListExecutorJobsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string executor_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+  Filter filter = 6;
+}
+
+message ListExecutorJobsResponse {
+  repeated ExecutorJob jobs = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListExecutorJobAttemptsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_id = 2 [(buf.validate.field).string.uuid = true];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListExecutorJobAttemptsResponse {
+  repeated ExecutorJobAttempt attempts = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListExecutorIncomingWebhooksRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListExecutorIncomingWebhooksResponse {
+  repeated ExecutorIncomingWebhook webhooks = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetExecutorIncomingWebhookRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+
+message GetExecutorIncomingWebhookResponse {
+  ExecutorIncomingWebhook webhook = 1;
+}

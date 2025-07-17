@@ -1,0 +1,246 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/secret_manager_resource.proto";
+
+message AuthService {
+  Namespace namespace = 1;
+}
+
+message AuthIDPConfig {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthType auth_type = 2;
+  Config config = 3;
+
+  enum AuthType {
+    AUTH_TYPE_UNSPECIFIED = 0;
+    AUTH_TYPE_OIDC = 1;
+    AUTH_TYPE_SAML = 2;
+    AUTH_TYPE_ID_TOKEN = 3;
+  }
+  message Config {
+    oneof config {
+      OIDCConfig oidc = 1;
+      SAMLConfig saml = 2;
+      IDTokenConfig id_token = 3;
+    }
+  }
+  message OIDCConfig {
+    string client_id_key = 1;
+    SecretValue client_secret_key = 2;
+    string provider_url = 3;
+    string issuer_url = 4;
+    string username_claim = 5;
+  }
+  message SAMLConfig {
+    string metadata_url = 1;
+    SecretValue sp_cert_base64 = 2;
+    SecretValue sp_key_base64 = 3;
+    string raw_metadata = 4;
+  }
+  message IDTokenConfig {
+    string provider_url = 1;
+    string client_id = 2;
+    string issuer_url = 3;
+    string username_claim = 4;
+  }
+}
+
+message UserProfileProviderConfig {
+  string provider = 1 [deprecated = true];
+  UserProfileProviderType provider_type = 2;
+  Config config = 3;
+
+  enum UserProfileProviderType {
+    USER_PROFILE_PROVIDER_TYPE_UNSPECIFIED = 0;
+    USER_PROFILE_PROVIDER_TYPE_TAILORDB = 1;
+  }
+
+  message Config {
+    oneof config {
+      TailorDBProviderConfig tailordb = 1;
+    }
+  }
+  message TailorDBProviderConfig {
+    string namespace = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+    string type = 2 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+    string username_field = 3;
+    repeated string attributes_fields = 4;
+    string tenant_id_field = 5;
+    map<string, string> attribute_map = 6 [(buf.validate.field).map.keys = {
+      string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+    }];
+  }
+}
+
+message TenantProviderConfig {
+  string provider = 1;
+  TenantProviderType provider_type = 2;
+  Config config = 3;
+
+  enum TenantProviderType {
+    TENANT_PROVIDER_TYPE_UNSPECIFIED = 0;
+    TENANT_PROVIDER_TYPE_TAILORDB = 1;
+  }
+
+  message Config {
+    oneof config {
+      TailorDBProviderConfig tailordb = 1;
+    }
+  }
+  message TailorDBProviderConfig {
+    string namespace = 1;
+    string type = 2;
+    string signature_field = 3;
+  }
+}
+
+message AuthInvoker {
+  string namespace = 1;
+  string machine_user_name = 2;
+}
+
+// Personal Access Token ---------------------------------------------
+message PersonalAccessToken {
+  string name = 1;
+  repeated PATScope scopes = 2;
+}
+
+enum PATScope {
+  PAT_SCOPE_UNSPECIFIED = 0;
+  PAT_SCOPE_READ = 1;
+  PAT_SCOPE_WRITE = 2;
+}
+
+// Machine User ------------------------------------------------------
+message MachineUser {
+  string id = 1;
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string client_id = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string client_secret = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  repeated string attributes = 5 [(buf.validate.field).repeated.items.string.uuid = true];
+  google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  map<string, google.protobuf.Value> attribute_map = 8 [(buf.validate.field).map.keys = {
+    string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+  }];
+}
+
+// Auth SCIM ------------------------------------------------
+message AuthSCIMConfig {
+  string machine_user_name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  enum AuthorizationType {
+    AUTHORIZATION_TYPE_UNSPECIFIED = 0;
+    AUTHORIZATION_TYPE_BEARER = 1;
+    AUTHORIZATION_TYPE_OAUTH2 = 2;
+  }
+  AuthorizationType authorization_type = 2;
+  oneof authorization_config {
+    SecretValue bearer_secret = 10;
+  }
+}
+
+message AuthSCIMResource {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string tailor_db_namespace = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string tailor_db_type = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+  repeated AuthSCIMAttributeMapping attribute_mapping = 4;
+  AuthSCIMSchema core_schema = 5;
+}
+
+message AuthSCIMAttributeMapping {
+  string tailor_db_field = 1;
+  string scim_path = 2;
+}
+
+message AuthSCIMSchema {
+  string name = 1;
+  repeated AuthSCIMAttribute attributes = 2;
+}
+
+message AuthSCIMAttribute {
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_COMPLEX = 1;
+    TYPE_STRING = 2;
+    TYPE_NUMBER = 3;
+    TYPE_BOOLEAN = 4;
+    TYPE_DATETIME = 5;
+  }
+  Type type = 1;
+  string name = 2;
+  string description = 3;
+  enum Mutability {
+    MUTABILITY_UNSPECIFIED = 0;
+    MUTABILITY_READ_ONLY = 1;
+    MUTABILITY_READ_WRITE = 2;
+    MUTABILITY_WRITE_ONLY = 3;
+  }
+  Mutability mutability = 4;
+  bool required = 5;
+  bool multi_valued = 6;
+  enum Uniqueness {
+    UNIQUENESS_UNSPECIFIED = 0;
+    UNIQUENESS_NONE = 1;
+    UNIQUENESS_SERVER = 2;
+    UNIQUENESS_GLOBAL = 3;
+  }
+  Uniqueness uniqueness = 7;
+  repeated string canonical_values = 8;
+  repeated AuthSCIMAttribute sub_attributes = 9;
+}
+
+message AuthConnection {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_OAUTH2 = 1;
+  }
+  Type type = 2;
+  oneof config {
+    option (buf.validate.oneof).required = true;
+    AuthConnectionOAuth2Config oauth2 = 3;
+  }
+  message AuthConnectionOAuth2Config {
+    string provider_url = 1;
+    string issuer_url = 2;
+    string client_id = 3;
+    string client_secret = 4 [(google.api.field_behavior) = INPUT_ONLY];
+  }
+  google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// Auth OAuth2 Client ------------------------------------------------
+
+message AuthOAuth2Client {
+  string name = 1;
+  string description = 2;
+  enum GrantType {
+    GRANT_TYPE_UNSPECIFIED = 0;
+    GRANT_TYPE_AUTHORIZATION_CODE = 1;
+    GRANT_TYPE_REFRESH_TOKEN = 2;
+  }
+  repeated GrantType grant_types = 3;
+  repeated string redirect_uris = 4;
+  string client_id = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string client_secret = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp created_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  enum ClientType {
+    CLIENT_TYPE_UNSPECIFIED = 0;
+    CLIENT_TYPE_CONFIDENTIAL = 1;
+    CLIENT_TYPE_PUBLIC = 2;
+  }
+  ClientType client_type = 8 [
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED,
+    (buf.validate.field).enum = {
+      defined_only: true
+      not_in: [0]
+    }
+  ];
+}
