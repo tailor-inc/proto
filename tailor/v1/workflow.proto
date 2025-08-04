@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/workflow_resource.proto";
+
+message CreateWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string main_job_function_name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  map<string, int64> job_functions = 4;
+}
+message CreateWorkflowResponse {
+  Workflow workflow = 1;
+}
+
+message UpdateWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string main_job_function_name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  map<string, int64> job_functions = 4;
+}
+message UpdateWorkflowResponse {
+  Workflow workflow = 1;
+}
+
+message DeleteWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message DeleteWorkflowResponse {}
+
+message GetWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkflowResponse {
+  Workflow workflow = 1;
+}
+
+message GetWorkflowByNameRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetWorkflowByNameResponse {
+  Workflow workflow = 1;
+}
+
+message ListWorkflowsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+
+message ListWorkflowsResponse {
+  repeated Workflow workflows = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message CreateWorkflowJobFunctionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string script = 3;
+}
+message CreateWorkflowJobFunctionResponse {
+  WorkflowJobFunction job_function = 1;
+}
+
+message UpdateWorkflowJobFunctionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string script = 3;
+}
+message UpdateWorkflowJobFunctionResponse {
+  WorkflowJobFunction job_function = 1;
+}
+
+message GetWorkflowJobFunctionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_function_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkflowJobFunctionResponse {
+  WorkflowJobFunction job_function = 1;
+}
+
+message GetWorkflowJobFunctionByNameRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetWorkflowJobFunctionByNameResponse {
+  WorkflowJobFunction job_function = 1;
+}
+
+message ListWorkflowJobFunctionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+
+message ListWorkflowJobFunctionsResponse {
+  repeated WorkflowJobFunction job_functions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetWorkflowExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkflowExecutionResponse {
+  WorkflowExecution execution = 1;
+}
+
+message ListWorkflowExecutionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+message ListWorkflowExecutionsResponse {
+  repeated WorkflowExecution executions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

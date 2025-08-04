@@ -18,11 +18,11 @@ message CreateWorkspaceRequest {
   string workspace_region = 2;
   string organization_id = 3 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   string folder_id = 4 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   bool delete_protection = 5;
 }
@@ -34,15 +34,15 @@ message UpdateWorkspaceRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string workspace_name = 2 [
     (buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$",
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   string organization_id = 3 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   string folder_id = 4 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   bool delete_protection = 5;
 
@@ -67,7 +67,7 @@ message ListWorkspacesRequest {
   uint32 page_size = 2;
   PageDirection page_direction = 3;
   View view = 4 [
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (buf.validate.field).enum = {
       defined_only: true
       not_in: [0]
@@ -94,7 +94,7 @@ message ListOrganizationWorkspacesRequest {
   string organization_id = 4 [(buf.validate.field).string.uuid = true];
   string folder_id = 5 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
 }
 
@@ -272,7 +272,7 @@ message CreateOrganizationFolderRequest {
   string organization_id = 1 [(buf.validate.field).string.uuid = true];
   string parent_folder_id = 2 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   string folder_name = 3 [(buf.validate.field).string.min_len = 1];
 }
@@ -285,7 +285,7 @@ message UpdateOrganizationFolderRequest {
   string folder_id = 2 [(buf.validate.field).string.uuid = true];
   string parent_folder_id = 3 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
   string folder_name = 4 [(buf.validate.field).string.min_len = 1];
 }
@@ -315,7 +315,7 @@ message ListOrganizationFoldersRequest {
   string organization_id = 4 [(buf.validate.field).string.uuid = true];
   string parent_folder_id = 5 [
     (buf.validate.field).string.uuid = true,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
   ];
 }
 message ListOrganizationFoldersResponse {

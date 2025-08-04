@@ -13,7 +13,9 @@ import "tailor/v1/meter.proto";
 import "tailor/v1/pipeline.proto";
 import "tailor/v1/secret_manager.proto";
 import "tailor/v1/stateflow.proto";
+import "tailor/v1/staticwebsite.proto";
 import "tailor/v1/tailordb.proto";
+import "tailor/v1/workflow.proto";
 import "tailor/v1/workspace.proto";
 
 service OperatorService {
@@ -1251,6 +1253,155 @@ service OperatorService {
   rpc GetIdPClient(GetIdPClientRequest) returns (GetIdPClientResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  // StaticWebsite -------------------------------------------------
+
+  // CreateStaticWebsite creates a new staticwebsite.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc CreateStaticWebsite(CreateStaticWebsiteRequest) returns (CreateStaticWebsiteResponse) {}
+
+  // UpdateStaticWebsite updates the staticwebsite.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: staticwebsite does not exist or can not be accessed
+  rpc UpdateStaticWebsite(UpdateStaticWebsiteRequest) returns (UpdateStaticWebsiteResponse) {}
+
+  // DeleteStaticWebsite deletes the staticwebsite.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: staticwebsite does not exist or can not be accessed
+  rpc DeleteStaticWebsite(DeleteStaticWebsiteRequest) returns (DeleteStaticWebsiteResponse) {}
+
+  // GetStaticWebsite returns an staticwebsite.
+  //
+  // [Errors]
+  // - Unauthenticated: token is expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: staticwebsite does not exist or can not be accessed
+  rpc GetStaticWebsite(GetStaticWebsiteRequest) returns (GetStaticWebsiteResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListStaticWebsites returns staticwebsites.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListStaticWebsites(ListStaticWebsitesRequest) returns (ListStaticWebsitesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // Workflow ---------------------------------------------------------
+
+  // CreateWorkflow creates a new workflow.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc CreateWorkflow(CreateWorkflowRequest) returns (CreateWorkflowResponse) {}
+
+  // UpdateWorkflow updates a workflow.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workflow does not exist or can not be accessed
+  rpc UpdateWorkflow(UpdateWorkflowRequest) returns (UpdateWorkflowResponse) {}
+
+  // DeleteWorkflow deletes a workflow.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workflow does not exist or can not be accessed
+  rpc DeleteWorkflow(DeleteWorkflowRequest) returns (DeleteWorkflowResponse) {}
+
+  // GetWorkflow returns a workflow.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workflow does not exist or can not be accessed
+  rpc GetWorkflow(GetWorkflowRequest) returns (GetWorkflowResponse) {}
+
+  // GetWorkflowByName returns a workflow by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workflow does not exist or can not be accessed
+  rpc GetWorkflowByName(GetWorkflowByNameRequest) returns (GetWorkflowByNameResponse) {}
+
+  // ListWorkflows returns workflows in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListWorkflows(ListWorkflowsRequest) returns (ListWorkflowsResponse) {}
+
+  // CreateWorkflowJobFunction creates a new workflow job function.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc CreateWorkflowJobFunction(CreateWorkflowJobFunctionRequest) returns (CreateWorkflowJobFunctionResponse) {}
+
+  // UpdateWorkflowJobFunction updates a workflow job function.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: job function does not exist or can not be accessed
+  rpc UpdateWorkflowJobFunction(UpdateWorkflowJobFunctionRequest) returns (UpdateWorkflowJobFunctionResponse) {}
+
+  // GetWorkflowJobFunction returns a workflow job function.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: job function does not exist or can not be accessed
+  rpc GetWorkflowJobFunction(GetWorkflowJobFunctionRequest) returns (GetWorkflowJobFunctionResponse) {}
+
+  // GetWorkflowJobFunctionByName returns a workflow job function by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: job function does not exist or can not be accessed
+  rpc GetWorkflowJobFunctionByName(GetWorkflowJobFunctionByNameRequest) returns (GetWorkflowJobFunctionByNameResponse) {}
+
+  // ListWorkflowJobFunctions returns workflow job functions in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListWorkflowJobFunctions(ListWorkflowJobFunctionsRequest) returns (ListWorkflowJobFunctionsResponse) {}
+
+  // GetWorkflowExecution returns a workflow execution.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: execution does not exist or can not be accessed
+  rpc GetWorkflowExecution(GetWorkflowExecutionRequest) returns (GetWorkflowExecutionResponse) {}
+
+  // ListWorkflowExecutions returns workflow executions in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListWorkflowExecutions(ListWorkflowExecutionsRequest) returns (ListWorkflowExecutionsResponse) {}
 }
 
 message PingRequest {}

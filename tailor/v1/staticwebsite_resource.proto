@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+message StaticWebsite {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string description = 2;
+  repeated string allowed_ip_addresses = 3;
+  string url = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}

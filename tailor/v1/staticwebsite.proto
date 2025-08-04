@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/staticwebsite_resource.proto";
+
+message CreateStaticWebsiteRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  StaticWebsite staticwebsite = 2 [(buf.validate.field).required = true];
+}
+message CreateStaticWebsiteResponse {
+  StaticWebsite staticwebsite = 1;
+}
+
+message UpdateStaticWebsiteRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  StaticWebsite staticwebsite = 2 [(buf.validate.field).required = true];
+}
+message UpdateStaticWebsiteResponse {
+  StaticWebsite staticwebsite = 1;
+}
+
+message GetStaticWebsiteRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetStaticWebsiteResponse {
+  StaticWebsite staticwebsite = 1;
+}
+
+message DeleteStaticWebsiteRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteStaticWebsiteResponse {}
+
+message ListStaticWebsitesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+
+message ListStaticWebsitesResponse {
+  repeated StaticWebsite staticwebsites = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

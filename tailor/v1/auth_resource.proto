@@ -237,7 +237,7 @@ message AuthOAuth2Client {
     CLIENT_TYPE_PUBLIC = 2;
   }
   ClientType client_type = 8 [
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (buf.validate.field).enum = {
       defined_only: true
       not_in: [0]

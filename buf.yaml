@@ -1,0 +1,26 @@
+version: v2
+
+# Dependencies for the public module
+deps:
+  - buf.build/bufbuild/protovalidate
+  - buf.build/googleapis/googleapis
+
+# Lint rules for public APIs
+lint:
+  use:
+    - COMMENT_RPC
+    - STANDARD
+    - PACKAGE_NO_IMPORT_CYCLE
+  except:
+    - FIELD_NOT_REQUIRED
+  disallow_comment_ignores: true
+
+# Breaking change detection
+breaking:
+  use:
+    - FILE
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT
+  ignore:
+    - buf/validate

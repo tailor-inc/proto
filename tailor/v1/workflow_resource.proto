@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message WorkflowJobFunction {
+  string id = 1;
+  string name = 2;
+  string script = 3;
+  int64 version = 4;
+
+  google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message Workflow {
+  string id = 1;
+  string name = 2;
+  string main_job_function_name = 3;
+  map<string, int64> job_functions = 4; // key=name, value=version
+
+  google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message WorkflowJobExecution {
+  string id = 1;
+  string stacked_job_name = 2;
+  Status status = 3;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_SUCCESS = 1;
+    STATUS_FAILED = 2;
+    STATUS_RUNNING = 3;
+    STATUS_SUSPENDING = 4;
+  }
+  string execution_id = 4; // execution_id in Function Execution
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp finished_at = 6;
+}
+
+message WorkflowExecution {
+  string id = 1;
+  string workflow_name = 2;
+  Status status = 3;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_SUCCESS = 1;
+    STATUS_FAILED = 2;
+    STATUS_RUNNING = 3;
+    STATUS_WAITING = 4;
+  }
+  repeated WorkflowJobExecution job_executions = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp finished_at = 6;
+}
