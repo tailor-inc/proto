@@ -22,3 +22,6 @@ Below are officially supported Client Libraries for the Tailor Platform:
 ## More Resources
 
 - [Tailor Platform Documentation](https://docs.tailor.tech/)
+
+## LICENSE
+This repository is licensed under the [Apache License 2.0](./LICENSE).
