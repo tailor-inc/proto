@@ -2,7 +2,7 @@
 
 This repository contains the Protocol Buffer definitions for the Tailor Platform.
 
-![Tailor Logo](./logo.png)
+![Tailor Logo](https://github.com/tailor-inc/proto/raw/main/logo.png)
 
 [Tailor Platform](https://www.tailor.tech/) is a backend platform that enables enterprises to create tailor-made business tools that perfectly match their unique requirements, amazingly fast.
 
@@ -10,7 +10,7 @@ This repository contains the Protocol Buffer definitions for the Tailor Platform
 
 ### Tailor APIs
 
-The [`tailor/**`](./tailor/) definitions in this repository represent the **controlplane RPCs** used to manage and configure the Tailor Platform resources.
+The [`tailor/**`](https://github.com/tailor-inc/proto/tree/main/tailor/) definitions in this repository represent the **controlplane RPCs** used to manage and configure the Tailor Platform resources.
 
 These APIs are designed to be used with various tools and services. You can also use these definitions to generate client libraries in different programming languages.
 
@@ -24,4 +24,4 @@ Below are officially supported Client Libraries for the Tailor Platform:
 - [Tailor Platform Documentation](https://docs.tailor.tech/)
 
 ## LICENSE
-This repository is licensed under the [Apache License 2.0](./LICENSE).
+This repository is licensed under the [Apache License 2.0](https://github.com/tailor-inc/proto/blob/main/LICENSE).

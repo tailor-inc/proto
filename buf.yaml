@@ -1,5 +1,8 @@
 version: v2
 
+modules:
+  - name: buf.build/tailor-inc/tailor
+
 # Dependencies for the public module
 deps:
   - buf.build/bufbuild/protovalidate
