@@ -1300,6 +1300,35 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // CreateDeployment creates a new deployment.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc CreateDeployment(CreateDeploymentRequest) returns (CreateDeploymentResponse) {}
+
+  // UploadFile uploads a file to a deployment.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: deployment does not exist or can not be accessed
+  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse) {}
+
+  // PublishDeployment publishes a deployment.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: deployment does not exist or can not be accessed
+  rpc PublishDeployment(PublishDeploymentRequest) returns (PublishDeploymentResponse) {}
+
+  // TODO(haru0017): remove
+  rpc DeployStaticWebsite(stream DeployStaticWebsiteRequest) returns (DeployStaticWebsiteResponse) {
+    option deprecated = true;
+  }
+
   // Workflow ---------------------------------------------------------
 
   // CreateWorkflow creates a new workflow.

@@ -22,6 +22,7 @@ message CreateIdPServiceRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string authorization = 3;
+  IdPUserAuthPolicy user_auth_policy = 4;
 }
 message CreateIdPServiceResponse {
   IdPService idp_service = 1;
@@ -31,6 +32,7 @@ message UpdateIdPServiceRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string authorization = 3;
+  IdPUserAuthPolicy user_auth_policy = 4;
 }
 message UpdateIdPServiceResponse {
   IdPService idp_service = 1;

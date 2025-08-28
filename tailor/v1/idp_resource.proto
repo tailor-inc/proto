@@ -9,10 +9,15 @@ message IdPService {
   Namespace namespace = 1;
   string authorization = 2;
   string provider_url = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  IdPUserAuthPolicy user_auth_policy = 4;
 }
 
 message IdPClient {
   string name = 1;
   string client_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
   string client_secret = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message IdPUserAuthPolicy {
+  bool use_non_email_identifier = 1;
 }

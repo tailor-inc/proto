@@ -27,6 +27,7 @@ message TailorDBType {
     optional RecordPermission record_permission = 8;
     map<string, RelationshipConfig> relationships = 9;
     Permission permission = 10;
+    map<string, FileConfig> files = 11;
   }
 
   message TypeSetting {
@@ -84,6 +85,10 @@ message TailorDBType {
     string src_field = 3;
     bool array = 4;
     string description = 5;
+  }
+
+  message FileConfig {
+    string description = 1;
   }
 
   message Value {

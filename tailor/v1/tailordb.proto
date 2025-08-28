@@ -74,6 +74,7 @@ message UpdateTailorDBTypeRequest {
   google.protobuf.FieldMask update_mask = 100 [
     (fieldmask.v1.masks) = "fields",
     (fieldmask.v1.masks) = "relationships",
+    (fieldmask.v1.masks) = "files",
     (fieldmask.v1.masks) = "description",
     (fieldmask.v1.masks) = "settings",
     (fieldmask.v1.masks) = "settings.aggregation",

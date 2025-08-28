@@ -48,3 +48,61 @@ message ListStaticWebsitesResponse {
   string next_page_token = 2;
   int64 total_count = 3;
 }
+
+message CreateDeploymentRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+
+message CreateDeploymentResponse {
+  string deployment_id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message UploadFileRequest {
+  message InitialUploadMetadata {
+    string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+    string deployment_id = 2 [(buf.validate.field).string.uuid = true];
+    string file_path = 3 [(buf.validate.field).string.pattern = "^[a-zA-Z0-9._-]+(/[a-zA-Z0-9._-]+)*$"];
+  }
+
+  oneof payload {
+    InitialUploadMetadata initial_metadata = 1;
+    bytes chunk_data = 2;
+  }
+}
+
+message UploadFileResponse {}
+
+message PublishDeploymentRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string deployment_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message PublishDeploymentResponse {
+  string url = 1;
+}
+
+message DeployStaticWebsiteRequest {
+  message InitialUploadMetadata {
+    string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+    string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+    ArchiveFormat archive_format = 3 [(buf.validate.field).enum = {
+      in: [1]
+    }];
+  }
+
+  enum ArchiveFormat {
+    ARCHIVE_FORMAT_UNSPECIFIED = 0;
+    ARCHIVE_FORMAT_TARGZ = 1;
+  }
+
+  oneof payload {
+    InitialUploadMetadata initial_metadata = 1;
+    bytes chunk_data = 2;
+  }
+}
+
+message DeployStaticWebsiteResponse {
+  string deployment_id = 1;
+  string url = 2;
+}
