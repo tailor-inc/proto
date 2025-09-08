@@ -3,6 +3,7 @@ syntax = "proto3";
 package tailor.v1;
 
 import "buf/validate/validate.proto";
+import "tailor/v1/auth_resource.proto";
 import "tailor/v1/resource.proto";
 import "tailor/v1/workflow_resource.proto";
 
@@ -127,4 +128,24 @@ message ListWorkflowExecutionsResponse {
   repeated WorkflowExecution executions = 1;
   string next_page_token = 2;
   int64 total_count = 3;
+}
+
+message TestStartWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+  AuthInvoker auth_invoker = 3;
+  optional string arg = 4;
+}
+
+message TestStartWorkflowResponse {
+  string execution_id = 1;
+}
+
+message TestResumeWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message TestResumeWorkflowResponse {
+  string execution_id = 1;
 }

@@ -235,6 +235,7 @@ message AuthOAuth2Client {
     CLIENT_TYPE_UNSPECIFIED = 0;
     CLIENT_TYPE_CONFIDENTIAL = 1;
     CLIENT_TYPE_PUBLIC = 2;
+    CLIENT_TYPE_BROWSER = 3;
   }
   ClientType client_type = 8 [
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,

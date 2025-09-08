@@ -1324,11 +1324,6 @@ service OperatorService {
   // - NotFound: deployment does not exist or can not be accessed
   rpc PublishDeployment(PublishDeploymentRequest) returns (PublishDeploymentResponse) {}
 
-  // TODO(haru0017): remove
-  rpc DeployStaticWebsite(stream DeployStaticWebsiteRequest) returns (DeployStaticWebsiteResponse) {
-    option deprecated = true;
-  }
-
   // Workflow ---------------------------------------------------------
 
   // CreateWorkflow creates a new workflow.
@@ -1431,6 +1426,23 @@ service OperatorService {
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   rpc ListWorkflowExecutions(ListWorkflowExecutionsRequest) returns (ListWorkflowExecutionsResponse) {}
+
+  // TestStartWorkflow starts a workflow execution for testing purposes.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workflow does not exist or can not be accessed
+  rpc TestStartWorkflow(TestStartWorkflowRequest) returns (TestStartWorkflowResponse) {}
+
+  // TestResumeWorkflow resumes a failed workflow execution for testing purposes.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: execution does not exist or can not be accessed
+  // - FailedPrecondition: execution is not in a resumable state
+  rpc TestResumeWorkflow(TestResumeWorkflowRequest) returns (TestResumeWorkflowResponse) {}
 }
 
 message PingRequest {}
