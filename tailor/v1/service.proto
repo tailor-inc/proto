@@ -2,13 +2,13 @@ syntax = "proto3";
 
 package tailor.v1;
 
-import "tailor/v1/ai.proto";
 import "tailor/v1/application.proto";
 import "tailor/v1/auth.proto";
 import "tailor/v1/events.proto";
 import "tailor/v1/executor.proto";
 import "tailor/v1/function.proto";
 import "tailor/v1/idp.proto";
+import "tailor/v1/metadata.proto";
 import "tailor/v1/meter.proto";
 import "tailor/v1/pipeline.proto";
 import "tailor/v1/secret_manager.proto";
@@ -1100,6 +1100,9 @@ service OperatorService {
   // RegisterAuthConnectionSession creates a new auth connection.
   rpc RegisterAuthConnectionSession(RegisterAuthConnectionSessionRequest) returns (RegisterAuthConnectionSessionResponse) {}
 
+  // ExchangeAuthConnectionAuthorizationCode exchanges OAuth2 authorization code for tokens and stores them.
+  rpc ExchangeAuthConnectionAuthorizationCode(ExchangeAuthConnectionAuthorizationCodeRequest) returns (ExchangeAuthConnectionAuthorizationCodeResponse) {}
+
   // CreateAuthOAuth2Client creates a new auth OAuth2 client.
   rpc CreateAuthOAuth2Client(CreateAuthOAuth2ClientRequest) returns (CreateAuthOAuth2ClientResponse) {}
 
@@ -1131,35 +1134,6 @@ service OperatorService {
 
   // ListFunctionExecutions lists function executions.
   rpc ListFunctionExecutions(ListFunctionExecutionsRequest) returns (ListFunctionExecutionsResponse) {}
-
-  // AI ------------------------------------------------------------
-
-  // CreateAiService creates a new ai service in a given workspace.
-  rpc CreateAiService(CreateAiServiceRequest) returns (CreateAiServiceResponse) {}
-
-  // ListAiServices lists ai services in a given workspace.
-  rpc ListAiServices(ListAiServicesRequest) returns (ListAiServicesResponse) {}
-
-  // GetAiService gets an ai service.
-  rpc GetAiService(GetAiServiceRequest) returns (GetAiServiceResponse) {}
-
-  // DeleteAiService deletes an ai service.
-  rpc DeleteAiService(DeleteAiServiceRequest) returns (DeleteAiServiceResponse) {}
-
-  // CreateAiTask creates a new ai task in a given ai service.
-  rpc CreateAiTask(CreateAiTaskRequest) returns (CreateAiTaskResponse) {}
-
-  // ListAiTasks lists ai tasks in a given ai service.
-  rpc ListAiTasks(ListAiTasksRequest) returns (ListAiTasksResponse) {}
-
-  // GetAiTask gets an ai task.
-  rpc GetAiTask(GetAiTaskRequest) returns (GetAiTaskResponse) {}
-
-  // UpdateAiTask updates an ai task.
-  rpc UpdateAiTask(UpdateAiTaskRequest) returns (UpdateAiTaskResponse) {}
-
-  // DeleteAiTask deletes an ai task.
-  rpc DeleteAiTask(DeleteAiTaskRequest) returns (DeleteAiTaskResponse) {}
 
   // Meter -----------------------------------------------------------
 
@@ -1443,6 +1417,26 @@ service OperatorService {
   // - NotFound: execution does not exist or can not be accessed
   // - FailedPrecondition: execution is not in a resumable state
   rpc TestResumeWorkflow(TestResumeWorkflowRequest) returns (TestResumeWorkflowResponse) {}
+
+  // Metadata --------------------------------------------------------
+
+  // SetMetadata sets metadata labels for a resource.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid or TRN format is incorrect
+  // - NotFound: resource does not exist or can not be accessed
+  rpc SetMetadata(SetMetadataRequest) returns (SetMetadataResponse) {}
+
+  // GetMetadata retrieves metadata labels for a resource.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid or TRN format is incorrect
+  // - NotFound: resource does not exist or can not be accessed
+  rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
 }
 
 message PingRequest {}

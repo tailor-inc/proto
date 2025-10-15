@@ -122,6 +122,7 @@ message ListPipelineResolverExecutionResultsRequest {
   PageDirection page_direction = 6;
   Filter filter = 7;
   PipelineResolverExecutionResultView view = 8;
+  string sort_by = 9;
 }
 
 enum PipelineResolverExecutionResultView {

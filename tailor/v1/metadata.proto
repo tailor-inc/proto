@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/metadata_resource.proto";
+
+message SetMetadataRequest {
+  string trn = 1 [
+    // trn:v1:workspace:<workspace_id>:**:*
+    (buf.validate.field).string.pattern = "^trn:v1:workspace:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}:[a-zA-Z0-9_:*-]+$"
+  ];
+  map<string, string> labels = 2 [
+    (buf.validate.field).map.keys.string.pattern = "^[a-z][a-z0-9_-]{0,62}$",
+    (buf.validate.field).map.values.string.pattern = "^$|^[a-z][a-z0-9_-]{0,62}$"
+  ];
+}
+
+message SetMetadataResponse {
+  Metadata metadata = 1;
+}
+
+// GetMetadataRequest retrieves metadata for a resource.
+message GetMetadataRequest {
+  string trn = 1 [
+    // trn:v1:workspace:<workspace_id>:**:*
+    (buf.validate.field).string.pattern = "^trn:v1:workspace:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}:[a-zA-Z0-9_:*-]+$"
+  ];
+}
+
+// GetMetadataResponse returns the metadata for a resource.
+message GetMetadataResponse {
+  Metadata metadata = 1;
+}

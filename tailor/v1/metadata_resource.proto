@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+message Metadata {
+  map<string, string> labels = 1;
+}

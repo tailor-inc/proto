@@ -345,6 +345,14 @@ message RegisterAuthConnectionSessionRequest {
 }
 message RegisterAuthConnectionSessionResponse {}
 
+message ExchangeAuthConnectionAuthorizationCodeRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string connection_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string authorization_code = 3 [(buf.validate.field).string.min_len = 1];
+  string redirect_uri = 4 [(buf.validate.field).string.min_len = 1];
+}
+message ExchangeAuthConnectionAuthorizationCodeResponse {}
+
 message CreateAuthOAuth2ClientRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2;

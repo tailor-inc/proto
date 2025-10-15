@@ -35,6 +35,7 @@ message ListFunctionExecutionsRequest {
   uint32 page_size = 3;
   PageDirection page_direction = 4;
   Filter filter = 5;
+  string sort_by = 6;
 }
 message ListFunctionExecutionsResponse {
   repeated FunctionExecution executions = 1;
