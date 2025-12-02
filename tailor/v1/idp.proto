@@ -23,6 +23,8 @@ message CreateIdPServiceRequest {
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string authorization = 3;
   IdPUserAuthPolicy user_auth_policy = 4;
+  // lang is the IETF BCP 47 language subtag.
+  IdPLang lang = 5;
 }
 message CreateIdPServiceResponse {
   IdPService idp_service = 1;
@@ -33,6 +35,8 @@ message UpdateIdPServiceRequest {
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string authorization = 3;
   IdPUserAuthPolicy user_auth_policy = 4;
+  // lang is the IETF BCP 47 language subtag.
+  IdPLang lang = 5;
 }
 message UpdateIdPServiceResponse {
   IdPService idp_service = 1;

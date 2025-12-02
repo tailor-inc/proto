@@ -3,6 +3,7 @@ syntax = "proto3";
 package tailor.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/struct.proto";
 import "tailor/v1/executor_resource.proto";
 import "tailor/v1/resource.proto";
 
@@ -106,3 +107,11 @@ message GetExecutorIncomingWebhookRequest {
 message GetExecutorIncomingWebhookResponse {
   ExecutorIncomingWebhook webhook = 1;
 }
+
+message TriggerExecutorRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string executor_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  google.protobuf.Struct payload = 3;
+}
+
+message TriggerExecutorResponse {}

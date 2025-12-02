@@ -36,10 +36,7 @@ message TailorDBType {
     bool bulk_upsert = 3;
     optional int64 default_query_limit_size = 4;
     optional int64 max_bulk_upsert_size = 5;
-    optional string plural_form = 6 [
-      (buf.validate.field).string.pattern = "^$|^[a-z][a-zA-Z0-9]{0,62}$",
-      (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
-    ];
+    optional string plural_form = 6 [(buf.validate.field).string.pattern = "^$|^[a-z][a-zA-Z0-9]{0,62}$"];
     bool publish_record_events = 7;
     bool draft = 8;
   }

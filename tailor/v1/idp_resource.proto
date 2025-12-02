@@ -10,6 +10,15 @@ message IdPService {
   string authorization = 2;
   string provider_url = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
   IdPUserAuthPolicy user_auth_policy = 4;
+  // lang is the IETF BCP 47 language subtag.
+  IdPLang lang = 5;
+}
+
+// IdPLang represents the IETF BCP 47 language subtag.
+enum IdPLang {
+  ID_P_LANG_UNSPECIFIED = 0;
+  ID_P_LANG_EN = 1;
+  ID_P_LANG_JA = 2;
 }
 
 message IdPClient {
