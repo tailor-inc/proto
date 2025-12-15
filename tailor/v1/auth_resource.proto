@@ -40,9 +40,10 @@ message AuthIDPConfig {
   }
   message SAMLConfig {
     string metadata_url = 1;
-    SecretValue sp_cert_base64 = 2;
-    SecretValue sp_key_base64 = 3;
+    SecretValue sp_cert_base64 = 2 [deprecated = true];
+    SecretValue sp_key_base64 = 3 [deprecated = true];
     string raw_metadata = 4;
+    bool enable_sign_request = 5;
   }
   message IDTokenConfig {
     string provider_url = 1;
