@@ -4,6 +4,7 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "tailor/v1/resource.proto";
@@ -40,8 +41,7 @@ message AuthIDPConfig {
   }
   message SAMLConfig {
     string metadata_url = 1;
-    SecretValue sp_cert_base64 = 2 [deprecated = true];
-    SecretValue sp_key_base64 = 3 [deprecated = true];
+    reserved 2, 3; // Previously: sp_cert_base64, sp_key_base64
     string raw_metadata = 4;
     bool enable_sign_request = 5;
   }
@@ -244,5 +244,17 @@ message AuthOAuth2Client {
       defined_only: true
       not_in: [0]
     }
+  ];
+  // Optional access token lifetime. If not set, uses the default lifetime.
+  // Minimum allowed value is 60 seconds, maximum is 1 day (86400 seconds).
+  google.protobuf.Duration access_token_lifetime = 9 [
+    (buf.validate.field).duration.gte = {seconds: 60},
+    (buf.validate.field).duration.lte = {seconds: 86400}
+  ];
+  // Optional refresh token lifetime. If not set, uses the default lifetime.
+  // Minimum allowed value is 60 seconds, maximum is 7 days (604800 seconds).
+  google.protobuf.Duration refresh_token_lifetime = 10 [
+    (buf.validate.field).duration.gte = {seconds: 60},
+    (buf.validate.field).duration.lte = {seconds: 604800}
   ];
 }
