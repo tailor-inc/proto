@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package tailor.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "tailor/v1/resource.proto";
 
@@ -28,6 +29,30 @@ message IdPClient {
 }
 
 message IdPUserAuthPolicy {
+  option (buf.validate.message).cel = {
+    id: "password_length_consistency"
+    message: "password_min_length must be less than or equal to password_max_length"
+    // Always validate using effective values (use default 6 for min, 4096 for max if unset)
+    expression: "(this.password_min_length == 0 ? 6 : this.password_min_length) <= (this.password_max_length == 0 ? 4096 : this.password_max_length)"
+  };
+
   bool use_non_email_identifier = 1;
   bool allow_self_password_reset = 2;
+  // Password policy fields (stored in Identity Platform, not in DB)
+  bool password_require_uppercase = 3;
+  bool password_require_lowercase = 4;
+  bool password_require_non_alphanumeric = 5;
+  bool password_require_numeric = 6;
+  // password_min_length: valid range is 6-30 (default: 6). When 0 (unset), uses default value 6.
+  int32 password_min_length = 7 [(buf.validate.field).cel = {
+    id: "password_min_length_range"
+    message: "password_min_length must be 0 (default) or between 6 and 30"
+    expression: "this == 0 || (this >= 6 && this <= 30)"
+  }];
+  // password_max_length: valid range is 6-4096 (default: 4096). When 0 (unset), uses default value 4096.
+  int32 password_max_length = 8 [(buf.validate.field).cel = {
+    id: "password_max_length_range"
+    message: "password_max_length must be 0 (default) or between 6 and 4096"
+    expression: "this == 0 || (this >= 6 && this <= 4096)"
+  }];
 }
