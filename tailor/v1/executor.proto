@@ -114,4 +114,6 @@ message TriggerExecutorRequest {
   google.protobuf.Struct payload = 3;
 }
 
-message TriggerExecutorResponse {}
+message TriggerExecutorResponse {
+  string job_id = 1 [(buf.validate.field).string.uuid = true];
+}

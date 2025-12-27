@@ -213,6 +213,22 @@ message AuthConnection {
     string issuer_url = 2;
     string client_id = 3;
     string client_secret = 4 [(google.api.field_behavior) = INPUT_ONLY];
+    // Optional override for the OAuth2 authorization endpoint. If unset, the default
+    // authorization URL derived from the provider's metadata (e.g. via provider_url)
+    // will be used. Must be an HTTPS URL with a hostname (no IP literals).
+    string auth_url = 5 [
+      (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+      (buf.validate.field).string.uri = true,
+      (buf.validate.field).string.pattern = "^https://[A-Za-z0-9.-]+(:[0-9]+)?(/.*)?$"
+    ];
+    // Optional override for the OAuth2 token endpoint. If unset, the default token URL
+    // derived from the provider's metadata (e.g. via provider_url) will be used. Must be
+    // an HTTPS URL with a hostname (no IP literals).
+    string token_url = 6 [
+      (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+      (buf.validate.field).string.uri = true,
+      (buf.validate.field).string.pattern = "^https://[A-Za-z0-9.-]+(:[0-9]+)?(/.*)?$"
+    ];
   }
   google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
