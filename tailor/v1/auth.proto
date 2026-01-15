@@ -399,3 +399,73 @@ message ListAuthOAuth2ClientsResponse {
   string next_page_token = 2;
   int64 total_count = 3;
 }
+
+message CreateControlplaneMachineUserRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string description = 4;
+}
+
+message CreateControlplaneMachineUserResponse {
+  ControlplaneMachineUser machine_user = 1;
+}
+
+message UpdateControlplaneMachineUserRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string machine_user_id = 3 [(buf.validate.field).string.uuid = true];
+  optional string name = 4 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  optional string description = 5;
+}
+
+message UpdateControlplaneMachineUserResponse {
+  ControlplaneMachineUser machine_user = 1;
+}
+
+message GetControlplaneMachineUserRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string machine_user_id = 3 [(buf.validate.field).string.uuid = true];
+}
+
+message GetControlplaneMachineUserResponse {
+  ControlplaneMachineUser machine_user = 1;
+}
+
+message ListControlplaneMachineUsersRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+
+message ListControlplaneMachineUsersResponse {
+  repeated ControlplaneMachineUser machine_users = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message DeleteControlplaneMachineUserRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string machine_user_id = 3 [(buf.validate.field).string.uuid = true];
+}
+
+message DeleteControlplaneMachineUserResponse {}

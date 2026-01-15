@@ -66,6 +66,8 @@ message CreateWorkflowJobFunctionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string script = 3;
+  // Reference to a function in the Function Registry
+  optional string script_ref = 4;
 }
 message CreateWorkflowJobFunctionResponse {
   WorkflowJobFunction job_function = 1;
@@ -75,6 +77,8 @@ message UpdateWorkflowJobFunctionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string script = 3;
+  // Reference to a function in the Function Registry
+  optional string script_ref = 4;
 }
 message UpdateWorkflowJobFunctionResponse {
   WorkflowJobFunction job_function = 1;

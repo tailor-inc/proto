@@ -32,10 +32,15 @@ message OrganizationAccess {
     string id = 1;
     string name = 2;
   }
+  message MachineUser {
+    string id = 1;
+    string name = 2;
+  }
 
   oneof member {
     Team team = 3;
     PlatformUser platform_user = 4;
+    MachineUser machine_user = 5;
   }
 }
 
@@ -69,10 +74,15 @@ message FolderAccess {
     string id = 1;
     string name = 2;
   }
+  message MachineUser {
+    string id = 1;
+    string name = 2;
+  }
 
   oneof member {
     Team team = 3;
     PlatformUser platform_user = 4;
+    MachineUser machine_user = 5;
   }
 }
 

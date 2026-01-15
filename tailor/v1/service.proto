@@ -7,6 +7,7 @@ import "tailor/v1/auth.proto";
 import "tailor/v1/events.proto";
 import "tailor/v1/executor.proto";
 import "tailor/v1/function.proto";
+import "tailor/v1/function_registry.proto";
 import "tailor/v1/idp.proto";
 import "tailor/v1/metadata.proto";
 import "tailor/v1/meter.proto";
@@ -1276,6 +1277,65 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // Function Registry ------------------------------------------------
+
+  // CreateFunctionRegistry creates a new function using client streaming.
+  // Supports scripts up to 20MB. Returns ALREADY_EXISTS error if name already exists.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - AlreadyExists: function with the same name already exists
+  rpc CreateFunctionRegistry(stream CreateFunctionRegistryRequest) returns (CreateFunctionRegistryResponse) {}
+
+  // UpdateFunctionRegistry updates an existing function using client streaming.
+  // Supports scripts up to 20MB. Returns NOT_FOUND error if name does not exist.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: function or workspace does not exist or can not be accessed
+  rpc UpdateFunctionRegistry(stream UpdateFunctionRegistryRequest) returns (UpdateFunctionRegistryResponse) {}
+
+  // GetFunctionRegistry retrieves a function by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: function does not exist or can not be accessed
+  rpc GetFunctionRegistry(GetFunctionRegistryRequest) returns (GetFunctionRegistryResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListFunctionRegistries lists functions in the registry with pagination and filtering.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListFunctionRegistries(ListFunctionRegistriesRequest) returns (ListFunctionRegistriesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DeleteFunctionRegistry deletes a function by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: function does not exist or can not be accessed
+  rpc DeleteFunctionRegistry(DeleteFunctionRegistryRequest) returns (DeleteFunctionRegistryResponse) {}
+
+  // DownloadFunctionRegistryScript downloads a script using server streaming.
+  // Supports scripts up to 20MB. First message contains metadata, subsequent messages contain chunks.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: function does not exist or can not be accessed
+  rpc DownloadFunctionRegistryScript(DownloadFunctionRegistryScriptRequest) returns (stream DownloadFunctionRegistryScriptResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // Meter -----------------------------------------------------------
 
   // ListMeterRequestCounts returns request counts per application in a workspace.
@@ -1600,6 +1660,58 @@ service OperatorService {
   rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  // Controlplane Machine User -----------------------
+
+  // CreateControlplaneMachineUser creates a Controlplane Machine User for organization or folder.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to create machine user on the parent resource
+  // - NotFound: parent resource (organization or folder) does not exist
+  // - AlreadyExists: machine user with the same name already exists in the parent
+  rpc CreateControlplaneMachineUser(CreateControlplaneMachineUserRequest) returns (CreateControlplaneMachineUserResponse) {}
+
+  // UpdateControlplaneMachineUser updates a Controlplane Machine User.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to update machine user on the parent resource
+  // - NotFound: machine user does not exist
+  rpc UpdateControlplaneMachineUser(UpdateControlplaneMachineUserRequest) returns (UpdateControlplaneMachineUserResponse) {}
+
+  // GetControlplaneMachineUser returns a Controlplane Machine User.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to view machine user on the parent resource
+  // - NotFound: machine user does not exist
+  rpc GetControlplaneMachineUser(GetControlplaneMachineUserRequest) returns (GetControlplaneMachineUserResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListControlplaneMachineUsers lists Controlplane Machine Users in organization or folder.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to list machine users on the parent resource
+  // - NotFound: parent resource does not exist
+  rpc ListControlplaneMachineUsers(ListControlplaneMachineUsersRequest) returns (ListControlplaneMachineUsersResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DeleteControlplaneMachineUser deletes a Controlplane Machine User.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to delete machine user on the parent resource
+  // - NotFound: machine user does not exist
+  rpc DeleteControlplaneMachineUser(DeleteControlplaneMachineUserRequest) returns (DeleteControlplaneMachineUserResponse) {}
 }
 
 message PingRequest {}

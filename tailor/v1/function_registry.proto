@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "tailor/v1/resource.proto";
+
+// FunctionRegistry represents a registered function in the registry.
+message FunctionRegistry {
+  // Unique identifier
+  string id = 1;
+
+  // Workspace ID
+  string workspace_id = 2;
+
+  // Function name
+  string name = 3;
+
+  // Size in bytes
+  int64 size_bytes = 4;
+
+  // SHA-256 content hash (content identifier)
+  string content_hash = 5;
+
+  // Description
+  string description = 6;
+
+  // Creation timestamp
+  google.protobuf.Timestamp created_at = 7;
+
+  // Last update timestamp
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// Client Streaming Upload Messages
+
+// CreateFunctionRegistryRequest is used for client streaming upload.
+// First message must contain info, subsequent messages contain chunks.
+message CreateFunctionRegistryRequest {
+  oneof payload {
+    // First message: metadata about the script
+    CreateFunctionRegistryInfo info = 1;
+    // Subsequent messages: script content chunks (recommended 64KB each)
+    bytes chunk = 2;
+  }
+}
+
+// CreateFunctionRegistryInfo contains metadata for function creation.
+message CreateFunctionRegistryInfo {
+  // Workspace ID
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+
+  // Function name (required, must be unique within workspace)
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 255
+    pattern: "^[a-zA-Z][a-zA-Z0-9_-]*$"
+  }];
+
+  // Description of the function (optional)
+  string description = 3;
+
+  // Size of the script in bytes
+  int64 size_bytes = 4 [(buf.validate.field).int64 = {
+    gt: 0
+    lte: 20971520
+  }]; // max 20MB
+
+  // Pre-computed SHA-256 hash of the script content (required, verified by server)
+  string content_hash = 5 [(buf.validate.field).string = {
+    len: 64
+    pattern: "^[a-fA-F0-9]{64}$"
+  }];
+}
+
+// CreateFunctionRegistryResponse is returned after upload completes.
+message CreateFunctionRegistryResponse {
+  // The created function
+  FunctionRegistry function = 1;
+}
+
+// UpdateFunctionRegistryRequest is used for client streaming upload.
+// First message must contain info, subsequent messages contain chunks.
+message UpdateFunctionRegistryRequest {
+  oneof payload {
+    // First message: metadata about the script
+    UpdateFunctionRegistryInfo info = 1;
+    // Subsequent messages: script content chunks (recommended 64KB each)
+    bytes chunk = 2;
+  }
+}
+
+// UpdateFunctionRegistryInfo contains metadata for function update.
+message UpdateFunctionRegistryInfo {
+  // Workspace ID
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+
+  // Function name (must exist)
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 255
+    pattern: "^[a-zA-Z][a-zA-Z0-9_-]*$"
+  }];
+
+  // Description of the function (optional)
+  string description = 3;
+
+  // Size of the script in bytes
+  int64 size_bytes = 4 [(buf.validate.field).int64 = {
+    gt: 0
+    lte: 20971520
+  }]; // max 20MB
+
+  // Pre-computed SHA-256 hash of the script content (required, verified by server)
+  string content_hash = 5 [(buf.validate.field).string = {
+    len: 64
+    pattern: "^[a-fA-F0-9]{64}$"
+  }];
+}
+
+// UpdateFunctionRegistryResponse is returned after update completes.
+message UpdateFunctionRegistryResponse {
+  // The updated function
+  FunctionRegistry function = 1;
+}
+
+// GetFunctionRegistryRequest is the request message for GetFunctionRegistry.
+message GetFunctionRegistryRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+// GetFunctionRegistryResponse is the response message for GetFunctionRegistry.
+message GetFunctionRegistryResponse {
+  FunctionRegistry function = 1;
+}
+
+// ListFunctionRegistriesRequest is the request message for ListFunctionRegistries.
+message ListFunctionRegistriesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+  string sort_by = 6;
+}
+
+// ListFunctionRegistriesResponse is the response message for ListFunctionRegistries.
+message ListFunctionRegistriesResponse {
+  repeated FunctionRegistry functions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+// DeleteFunctionRegistryRequest is the request message for DeleteFunctionRegistry.
+message DeleteFunctionRegistryRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+// DeleteFunctionRegistryResponse is the response message for DeleteFunctionRegistry.
+message DeleteFunctionRegistryResponse {}
+
+// Server Streaming Download Messages
+
+// DownloadFunctionRegistryScriptRequest is the request message for DownloadFunctionRegistryScript.
+message DownloadFunctionRegistryScriptRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.min_len = 1];
+  // Optional content hash to get specific version. If not provided, returns current version.
+  optional string content_hash = 3 [(buf.validate.field).string = {
+    len: 64
+    pattern: "^[a-fA-F0-9]{64}$"
+  }];
+}
+
+// DownloadFunctionRegistryScriptResponse is used for server streaming download.
+// First message contains metadata, subsequent messages contain chunks.
+message DownloadFunctionRegistryScriptResponse {
+  oneof payload {
+    // First message: metadata about the script and function
+    FunctionRegistryScriptMetadata metadata = 1;
+    // Subsequent messages: script content chunks (64KB each)
+    bytes chunk = 2;
+  }
+}
+
+// FunctionRegistryScriptMetadata contains metadata for script download.
+message FunctionRegistryScriptMetadata {
+  // The function details
+  FunctionRegistry function = 1;
+}

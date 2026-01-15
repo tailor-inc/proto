@@ -12,6 +12,9 @@ message WorkflowJobFunction {
   int64 version = 4;
 
   google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Reference to a function in the Function Registry
+  optional string script_ref = 6;
 }
 
 message Workflow {

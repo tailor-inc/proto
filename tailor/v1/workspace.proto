@@ -215,6 +215,7 @@ message GrantOrganizationAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 3 [(buf.validate.field).string.uuid = true];
     string email = 4 [(buf.validate.field).string.email = true];
+    string machine_user_id = 5 [(buf.validate.field).string.uuid = true];
   }
 }
 message GrantOrganizationAccessResponse {}
@@ -229,6 +230,7 @@ message UpdateOrganizationAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 3 [(buf.validate.field).string.uuid = true];
     string email = 4 [(buf.validate.field).string.email = true];
+    string machine_user_id = 5 [(buf.validate.field).string.uuid = true];
   }
 }
 message UpdateOrganizationAccessResponse {}
@@ -239,6 +241,7 @@ message RevokeOrganizationAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 2 [(buf.validate.field).string.uuid = true];
     string email = 3 [(buf.validate.field).string.email = true];
+    string machine_user_id = 4 [(buf.validate.field).string.uuid = true];
   }
 }
 message RevokeOrganizationAccessResponse {}
@@ -262,6 +265,7 @@ message GetOrganizationAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 2 [(buf.validate.field).string.uuid = true];
     string email = 3 [(buf.validate.field).string.email = true];
+    string machine_user_id = 4 [(buf.validate.field).string.uuid = true];
   }
 }
 message GetOrganizationAccessResponse {
@@ -335,6 +339,7 @@ message GrantOrganizationFolderAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 4 [(buf.validate.field).string.uuid = true];
     string email = 5 [(buf.validate.field).string.email = true];
+    string machine_user_id = 6 [(buf.validate.field).string.uuid = true];
   }
 }
 message GrantOrganizationFolderAccessResponse {}
@@ -350,6 +355,7 @@ message UpdateOrganizationFolderAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 4 [(buf.validate.field).string.uuid = true];
     string email = 5 [(buf.validate.field).string.email = true];
+    string machine_user_id = 6 [(buf.validate.field).string.uuid = true];
   }
 }
 message UpdateOrganizationFolderAccessResponse {}
@@ -361,6 +367,7 @@ message RevokeOrganizationFolderAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 3 [(buf.validate.field).string.uuid = true];
     string email = 4 [(buf.validate.field).string.email = true];
+    string machine_user_id = 5 [(buf.validate.field).string.uuid = true];
   }
 }
 message RevokeOrganizationFolderAccessResponse {}
@@ -386,6 +393,7 @@ message GetOrganizationFolderAccessRequest {
     option (buf.validate.oneof).required = true;
     string team_id = 3 [(buf.validate.field).string.uuid = true];
     string email = 4 [(buf.validate.field).string.email = true];
+    string machine_user_id = 5 [(buf.validate.field).string.uuid = true];
   }
 }
 message GetOrganizationFolderAccessResponse {
