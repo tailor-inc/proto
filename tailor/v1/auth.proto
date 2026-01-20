@@ -11,8 +11,20 @@ import "tailor/v1/resource.proto";
 message CreateAuthServiceRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  // Enable publishing session lifecycle events (issued, revoked, refreshed).
+  bool publish_session_events = 3;
 }
 message CreateAuthServiceResponse {
+  AuthService auth_service = 1;
+}
+
+message UpdateAuthServiceRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  // Enable publishing session lifecycle events (issued, revoked, refreshed).
+  bool publish_session_events = 3;
+}
+message UpdateAuthServiceResponse {
   AuthService auth_service = 1;
 }
 

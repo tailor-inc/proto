@@ -1011,6 +1011,14 @@ service OperatorService {
   // - NotFound: workspace does not exist or can not be accessed
   rpc CreateAuthService(CreateAuthServiceRequest) returns (CreateAuthServiceResponse) {}
 
+  // UpdateAuthService updates an auth service.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: auth service does not exist or can not be accessed
+  rpc UpdateAuthService(UpdateAuthServiceRequest) returns (UpdateAuthServiceResponse) {}
+
   // DeleteAuthService deletes an auth service.
   //
   // [Errors]

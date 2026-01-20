@@ -12,6 +12,9 @@ import "tailor/v1/secret_manager_resource.proto";
 
 message AuthService {
   Namespace namespace = 1;
+  // Enable publishing session lifecycle events (issued, revoked, refreshed).
+  // When enabled, events are published to the dataplane event topic.
+  bool publish_session_events = 2;
 }
 
 message AuthIDPConfig {
