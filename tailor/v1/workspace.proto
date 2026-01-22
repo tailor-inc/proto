@@ -169,7 +169,7 @@ message GetWorkspaceRoleResponse {
 
 message UpdateOrganizationRequest {
   string organization_id = 1 [(buf.validate.field).string.uuid = true];
-  string organization_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string organization_name = 2 [(buf.validate.field).string.min_len = 1];
 }
 message UpdateOrganizationResponse {
   Organization organization = 1;

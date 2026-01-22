@@ -454,6 +454,19 @@ message GetControlplaneMachineUserResponse {
   ControlplaneMachineUser machine_user = 1;
 }
 
+message GetControlplaneMachineUserByNameRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  string name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+
+message GetControlplaneMachineUserByNameResponse {
+  ControlplaneMachineUser machine_user = 1;
+}
+
 message ListControlplaneMachineUsersRequest {
   string organization_id = 1 [(buf.validate.field).string.uuid = true];
   string folder_id = 2 [

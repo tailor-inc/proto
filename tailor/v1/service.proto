@@ -1701,6 +1701,17 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // GetControlplaneMachineUserByName returns a Controlplane Machine User by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: no permission to view machine user on the parent resource
+  // - NotFound: machine user does not exist
+  rpc GetControlplaneMachineUserByName(GetControlplaneMachineUserByNameRequest) returns (GetControlplaneMachineUserByNameResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // ListControlplaneMachineUsers lists Controlplane Machine Users in organization or folder.
   //
   // [Errors]
