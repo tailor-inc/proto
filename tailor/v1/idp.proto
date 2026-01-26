@@ -25,6 +25,9 @@ message CreateIdPServiceRequest {
   IdPUserAuthPolicy user_auth_policy = 4;
   // lang is the IETF BCP 47 language subtag.
   IdPLang lang = 5;
+  // publish_user_events enables publishing user lifecycle events (created, updated, deleted).
+  // When enabled, events are published to the dataplane event topic.
+  bool publish_user_events = 6;
 }
 message CreateIdPServiceResponse {
   IdPService idp_service = 1;
@@ -37,6 +40,9 @@ message UpdateIdPServiceRequest {
   IdPUserAuthPolicy user_auth_policy = 4;
   // lang is the IETF BCP 47 language subtag.
   IdPLang lang = 5;
+  // publish_user_events enables publishing user lifecycle events (created, updated, deleted).
+  // When enabled, events are published to the dataplane event topic.
+  bool publish_user_events = 6;
 }
 message UpdateIdPServiceResponse {
   IdPService idp_service = 1;

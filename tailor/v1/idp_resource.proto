@@ -13,6 +13,9 @@ message IdPService {
   IdPUserAuthPolicy user_auth_policy = 4;
   // lang is the IETF BCP 47 language subtag.
   IdPLang lang = 5;
+  // publish_user_events indicates whether user lifecycle events (created, updated, deleted) are enabled.
+  // When enabled, events are published to the dataplane event topic.
+  bool publish_user_events = 6;
 }
 
 // IdPLang represents the IETF BCP 47 language subtag.
