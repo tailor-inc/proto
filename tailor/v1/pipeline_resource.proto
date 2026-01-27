@@ -68,6 +68,7 @@ message PipelineResolver {
     Script post_hook = 17;
     optional string operation_name = 18;
     Script operation_hook = 19;
+    optional string operation_source_ref = 20; // function registry reference
   }
 
   reserved 1;

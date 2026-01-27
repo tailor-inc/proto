@@ -108,9 +108,12 @@ message ExecutorTargetTailorGraphqlConfig {
 
 message ExecutorTargetFunctionConfig {
   string name = 1 [(buf.validate.field).string.min_len = 1];
-  string script = 2 [(buf.validate.field).string.min_len = 1];
+  // script contains inline JavaScript code. Mutually exclusive with script_ref.
+  string script = 2;
   Script variables = 3;
   AuthInvoker invoker = 4;
+  // script_ref references a function in the function registry. Mutually exclusive with script.
+  optional string script_ref = 5 [(buf.validate.field).string.min_len = 1];
 }
 
 message ExecutorTargetWorkflowConfig {

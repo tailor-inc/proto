@@ -123,6 +123,7 @@ message GetWorkflowExecutionResponse {
 
 message ListWorkflowExecutionsRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_name = 6 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string page_token = 2;
   uint32 page_size = 3;
   PageDirection page_direction = 4;
