@@ -38,6 +38,11 @@ message IdPUserAuthPolicy {
     // Always validate using effective values (use default 6 for min, 4096 for max if unset)
     expression: "(this.password_min_length == 0 ? 6 : this.password_min_length) <= (this.password_max_length == 0 ? 4096 : this.password_max_length)"
   };
+  option (buf.validate.message).cel = {
+    id: "allowed_email_domains_requires_email_identifier"
+    message: "allowed_email_domains cannot be set when use_non_email_identifier is true"
+    expression: "this.allowed_email_domains.size() == 0 || !this.use_non_email_identifier"
+  };
 
   bool use_non_email_identifier = 1;
   bool allow_self_password_reset = 2;
@@ -57,5 +62,15 @@ message IdPUserAuthPolicy {
     id: "password_max_length_range"
     message: "password_max_length must be 0 (default) or between 6 and 4096"
     expression: "this == 0 || (this >= 6 && this <= 4096)"
+  }];
+  // List of allowed email domains (e.g., ["example.com", "corp.example.com"])
+  // Empty list means all domains are allowed (backward compatible)
+  // Cannot be set when use_non_email_identifier is true
+  repeated string allowed_email_domains = 9 [(buf.validate.field).repeated = {
+    unique: true
+    max_items: 100
+    items: {
+      string: {hostname: true}
+    }
   }];
 }
