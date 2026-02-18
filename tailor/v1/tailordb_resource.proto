@@ -203,6 +203,8 @@ message TailorDBType {
       OPERATOR_NE = 2;
       OPERATOR_IN = 3;
       OPERATOR_NIN = 4;
+      OPERATOR_HAS_ANY = 5;
+      OPERATOR_NHAS_ANY = 6;
     }
 
     enum Permit {
@@ -258,6 +260,8 @@ message TailorDBGQLPermission {
     OPERATOR_NE = 2;
     OPERATOR_IN = 3;
     OPERATOR_NIN = 4;
+    OPERATOR_HAS_ANY = 5;
+    OPERATOR_NHAS_ANY = 6;
   }
 
   enum Action {

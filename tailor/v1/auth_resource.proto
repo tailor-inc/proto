@@ -239,6 +239,11 @@ message AuthConnection {
 // Auth OAuth2 Client ------------------------------------------------
 
 message AuthOAuth2Client {
+  option (buf.validate.message).cel = {
+    id: "browser_client_cannot_require_dpop"
+    message: "require_dpop cannot be set to true for browser clients"
+    expression: "this.client_type != tailor.v1.AuthOAuth2Client.ClientType.CLIENT_TYPE_BROWSER || this.require_dpop == false"
+  };
   string name = 1;
   string description = 2;
   enum GrantType {
