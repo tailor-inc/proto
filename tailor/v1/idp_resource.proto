@@ -48,6 +48,21 @@ message IdPUserAuthPolicy {
     message: "allow_google_oauth cannot be enabled when use_non_email_identifier is true"
     expression: "!this.allow_google_oauth || !this.use_non_email_identifier"
   };
+  option (buf.validate.message).cel = {
+    id: "allow_google_oauth_requires_allowed_email_domains"
+    message: "allowed_email_domains must be set when allow_google_oauth is true"
+    expression: "!this.allow_google_oauth || this.allowed_email_domains.size() > 0"
+  };
+  option (buf.validate.message).cel = {
+    id: "disable_password_auth_requires_google_oauth"
+    message: "disable_password_auth requires allow_google_oauth to be enabled"
+    expression: "!this.disable_password_auth || this.allow_google_oauth"
+  };
+  option (buf.validate.message).cel = {
+    id: "disable_password_auth_conflicts_with_self_password_reset"
+    message: "allow_self_password_reset cannot be enabled when disable_password_auth is true"
+    expression: "!this.disable_password_auth || !this.allow_self_password_reset"
+  };
 
   bool use_non_email_identifier = 1;
   bool allow_self_password_reset = 2;
@@ -81,5 +96,11 @@ message IdPUserAuthPolicy {
   // allow_google_oauth enables "Sign in with Google" for this namespace.
   // When enabled, users can authenticate using their Google account.
   // Cannot be enabled when use_non_email_identifier is true.
+  // Requires allowed_email_domains to be set.
   bool allow_google_oauth = 10;
+  // disable_password_auth disables password-based authentication for this namespace.
+  // When enabled, users cannot sign in or reset their password using email/password.
+  // Requires allow_google_oauth to be enabled.
+  // Cannot be used with allow_self_password_reset.
+  bool disable_password_auth = 11;
 }
