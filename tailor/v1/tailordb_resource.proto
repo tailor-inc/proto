@@ -82,6 +82,10 @@ message TailorDBType {
     repeated Value allowed_values = 15;
     bool vector = 16;
     Serial serial = 17;
+    optional int32 scale = 18 [(buf.validate.field).int32 = {
+      gte: 0
+      lte: 12
+    }];
   }
 
   message RelationshipConfig {
