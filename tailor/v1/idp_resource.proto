@@ -16,6 +16,21 @@ message IdPService {
   // publish_user_events indicates whether user lifecycle events (created, updated, deleted) are enabled.
   // When enabled, events are published to the dataplane event topic.
   bool publish_user_events = 6;
+  IdPDisableGqlOperations disable_gql_operations = 7;
+}
+
+// IdPDisableGqlOperations controls which IdP-related GraphQL operations are disabled.
+message IdPDisableGqlOperations {
+  // create disables the _createUser GraphQL mutation.
+  bool create = 1;
+  // update disables the _updateUser GraphQL mutation.
+  bool update = 2;
+  // delete disables the _deleteUser GraphQL mutation.
+  bool delete = 3;
+  // read disables the _users and _user GraphQL queries.
+  bool read = 4;
+  // send_password_reset_email disables the _sendPasswordResetEmail GraphQL mutation.
+  bool send_password_reset_email = 5;
 }
 
 // IdPLang represents the IETF BCP 47 language subtag.

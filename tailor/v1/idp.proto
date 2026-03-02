@@ -28,6 +28,7 @@ message CreateIdPServiceRequest {
   // publish_user_events enables publishing user lifecycle events (created, updated, deleted).
   // When enabled, events are published to the dataplane event topic.
   bool publish_user_events = 6;
+  IdPDisableGqlOperations disable_gql_operations = 7;
 }
 message CreateIdPServiceResponse {
   IdPService idp_service = 1;
@@ -43,6 +44,7 @@ message UpdateIdPServiceRequest {
   // publish_user_events enables publishing user lifecycle events (created, updated, deleted).
   // When enabled, events are published to the dataplane event topic.
   bool publish_user_events = 6;
+  IdPDisableGqlOperations disable_gql_operations = 7;
 }
 message UpdateIdPServiceResponse {
   IdPService idp_service = 1;
