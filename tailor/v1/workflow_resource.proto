@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package tailor.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
 message WorkflowJobFunction {
@@ -17,6 +19,33 @@ message WorkflowJobFunction {
   optional string script_ref = 6;
 }
 
+message RetryPolicy {
+  option (buf.validate.message).cel = {
+    id: "backoff_consistency"
+    message: "initial_backoff must be less than or equal to max_backoff"
+    expression: "this.max_retries == 0 || this.initial_backoff <= this.max_backoff"
+  };
+  option (buf.validate.message).cel = {
+    id: "initial_backoff_required"
+    message: "initial_backoff must be greater than 0 when max_retries > 0"
+    expression: "this.max_retries == 0 || this.initial_backoff > duration('0s')"
+  };
+
+  int32 max_retries = 1 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 10
+  }];
+  google.protobuf.Duration initial_backoff = 2 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+    lte: {seconds: 3600}
+  }];
+  google.protobuf.Duration max_backoff = 3 [(buf.validate.field).duration = {
+    gte: {seconds: 0}
+    lte: {seconds: 86400}
+  }];
+  optional double backoff_multiplier = 4 [(buf.validate.field).double.gte = 1];
+}
+
 message Workflow {
   string id = 1;
   string name = 2;
@@ -25,6 +54,8 @@ message Workflow {
 
   google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
   google.protobuf.Timestamp updated_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  optional RetryPolicy retry_policy = 7;
 }
 
 message WorkflowJobExecution {
@@ -54,8 +85,11 @@ message WorkflowExecution {
     STATUS_RUNNING = 3;
     STATUS_SUCCESS = 4;
     STATUS_FAILED = 5;
+    STATUS_PENDING_RETRY = 6;
   }
   repeated WorkflowJobExecution job_executions = 4;
   google.protobuf.Timestamp started_at = 5;
   google.protobuf.Timestamp finished_at = 6;
+  int32 retry_count = 7;
+  google.protobuf.Timestamp retry_after = 8;
 }

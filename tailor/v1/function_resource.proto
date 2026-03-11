@@ -5,6 +5,11 @@ package tailor.v1;
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
+message FunctionErrorInfo {
+  string name = 1 [(buf.validate.field).string.max_len = 128];
+  string message = 2 [(buf.validate.field).string.max_len = 256];
+}
+
 message FunctionExecution {
   string id = 1 [(buf.validate.field).string.uuid = true];
   string workspace_id = 2 [(buf.validate.field).string.uuid = true];
@@ -31,4 +36,5 @@ message FunctionExecution {
     TYPE_JOB = 2;
   }
   string result = 9;
+  FunctionErrorInfo error = 10;
 }

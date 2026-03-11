@@ -16,6 +16,7 @@ import "tailor/v1/secret_manager.proto";
 import "tailor/v1/stateflow.proto";
 import "tailor/v1/staticwebsite.proto";
 import "tailor/v1/tailordb.proto";
+import "tailor/v1/telemetry_export.proto";
 import "tailor/v1/workflow.proto";
 import "tailor/v1/workspace.proto";
 
@@ -1731,6 +1732,65 @@ service OperatorService {
   // - PermissionDenied: no permission to delete machine user on the parent resource
   // - NotFound: machine user does not exist
   rpc DeleteControlplaneMachineUser(DeleteControlplaneMachineUserRequest) returns (DeleteControlplaneMachineUserResponse) {}
+
+  // Telemetry Export -------------------------------------------------------
+
+  // CreateTelemetryExport creates a new telemetry export configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to update
+  // - NotFound: workspace does not exist or can not be accessed
+  // - AlreadyExists: telemetry export with the same name already exists
+  rpc CreateTelemetryExport(CreateTelemetryExportRequest) returns (CreateTelemetryExportResponse) {}
+
+  // UpdateTelemetryExport updates an existing telemetry export configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to update
+  // - NotFound: workspace or telemetry export does not exist or can not be accessed
+  rpc UpdateTelemetryExport(UpdateTelemetryExportRequest) returns (UpdateTelemetryExportResponse) {}
+
+  // GetTelemetryExport returns a telemetry export configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace or telemetry export does not exist or can not be accessed
+  rpc GetTelemetryExport(GetTelemetryExportRequest) returns (GetTelemetryExportResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListTelemetryExports returns telemetry export configurations in a workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListTelemetryExports(ListTelemetryExportsRequest) returns (ListTelemetryExportsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DeleteTelemetryExport deletes a telemetry export configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to delete
+  // - NotFound: workspace or telemetry export does not exist or can not be accessed
+  rpc DeleteTelemetryExport(DeleteTelemetryExportRequest) returns (DeleteTelemetryExportResponse) {}
+
+  // TestTelemetryExport sends a test span to validate endpoint reachability.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to update
+  // - NotFound: workspace or telemetry export does not exist or can not be accessed
+  rpc TestTelemetryExport(TestTelemetryExportRequest) returns (TestTelemetryExportResponse) {}
 }
 
 message PingRequest {}

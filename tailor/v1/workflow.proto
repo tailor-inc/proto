@@ -12,6 +12,7 @@ message CreateWorkflowRequest {
   string workflow_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string main_job_function_name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   map<string, int64> job_functions = 4;
+  optional RetryPolicy retry_policy = 5;
 }
 message CreateWorkflowResponse {
   Workflow workflow = 1;
@@ -22,6 +23,7 @@ message UpdateWorkflowRequest {
   string workflow_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string main_job_function_name = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   map<string, int64> job_functions = 4;
+  optional RetryPolicy retry_policy = 5;
 }
 message UpdateWorkflowResponse {
   Workflow workflow = 1;

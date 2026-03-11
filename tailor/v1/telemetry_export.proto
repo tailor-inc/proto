@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/telemetry_export_resource.proto";
+
+message CreateTelemetryExportRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  TelemetryExport telemetry_export = 2 [(buf.validate.field).required = true];
+}
+message CreateTelemetryExportResponse {
+  TelemetryExport telemetry_export = 1;
+}
+
+message UpdateTelemetryExportRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  TelemetryExport telemetry_export = 2 [(buf.validate.field).required = true];
+}
+message UpdateTelemetryExportResponse {
+  TelemetryExport telemetry_export = 1;
+}
+
+message GetTelemetryExportRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message GetTelemetryExportResponse {
+  TelemetryExport telemetry_export = 1;
+}
+
+message ListTelemetryExportsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListTelemetryExportsResponse {
+  repeated TelemetryExport telemetry_exports = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message DeleteTelemetryExportRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteTelemetryExportResponse {}
+
+message TestTelemetryExportRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message TestTelemetryExportResponse {
+  bool success = 1;
+  string message = 2;
+}
