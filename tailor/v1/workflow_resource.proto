@@ -43,7 +43,7 @@ message RetryPolicy {
     gte: {seconds: 0}
     lte: {seconds: 86400}
   }];
-  optional double backoff_multiplier = 4 [(buf.validate.field).double.gte = 1];
+  double backoff_multiplier = 4 [(buf.validate.field).double.gte = 1];
 }
 
 message Workflow {
