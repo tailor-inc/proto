@@ -324,6 +324,47 @@ message GetAuthSCIMResourcesResponse {
   repeated AuthSCIMResource scim_resources = 1;
 }
 
+// Auth Hook --------------------------------------------------------
+message CreateAuthHookRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthHook hook = 3 [(buf.validate.field).required = true];
+}
+message CreateAuthHookResponse {
+  AuthHook hook = 1;
+}
+
+message UpdateAuthHookRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthHook hook = 3 [(buf.validate.field).required = true];
+}
+message UpdateAuthHookResponse {
+  AuthHook hook = 1;
+}
+
+message DeleteAuthHookRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthHookPoint hook_point = 3 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+}
+message DeleteAuthHookResponse {}
+
+message GetAuthHookRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  AuthHookPoint hook_point = 3 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+}
+message GetAuthHookResponse {
+  AuthHook hook = 1;
+}
+
 message CreateAuthConnectionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   AuthConnection connection = 2 [(buf.validate.field).required = true];

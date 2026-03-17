@@ -1225,6 +1225,22 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // Auth Hook --------------------------------------------------------
+
+  // CreateAuthHook creates a hook for the auth namespace.
+  rpc CreateAuthHook(CreateAuthHookRequest) returns (CreateAuthHookResponse) {}
+
+  // UpdateAuthHook updates a hook for the auth namespace.
+  rpc UpdateAuthHook(UpdateAuthHookRequest) returns (UpdateAuthHookResponse) {}
+
+  // DeleteAuthHook deletes a hook for the auth namespace.
+  rpc DeleteAuthHook(DeleteAuthHookRequest) returns (DeleteAuthHookResponse) {}
+
+  // GetAuthHook gets a hook for the auth namespace.
+  rpc GetAuthHook(GetAuthHookRequest) returns (GetAuthHookResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // CreateAuthConnection creates a new auth connection.
   rpc CreateAuthConnection(CreateAuthConnectionRequest) returns (CreateAuthConnectionResponse) {}
 

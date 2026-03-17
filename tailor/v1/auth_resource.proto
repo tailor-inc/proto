@@ -200,6 +200,22 @@ message AuthSCIMAttribute {
   repeated AuthSCIMAttribute sub_attributes = 9;
 }
 
+// Auth Hook --------------------------------------------------------
+enum AuthHookPoint {
+  AUTH_HOOK_POINT_UNSPECIFIED = 0;
+  AUTH_HOOK_POINT_BEFORE_LOGIN = 1;
+}
+
+message AuthHook {
+  AuthHookPoint hook_point = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string script_ref = 2 [(buf.validate.field).string.min_len = 1];
+  reserved 3;
+  AuthInvoker invoker = 4 [(buf.validate.field).required = true];
+}
+
 message AuthConnection {
   string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   enum Type {

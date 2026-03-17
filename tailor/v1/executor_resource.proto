@@ -56,8 +56,53 @@ message ExecutorTriggerScheduleConfig {
 }
 
 message ExecutorTriggerEventConfig {
-  string event_type = 1 [(buf.validate.field).string.min_len = 1];
-  Script condition = 2;
+  string event_type = 1 [deprecated = true];
+  Script condition = 2 [deprecated = true];
+
+  oneof typed_config {
+    ExecutorTailorDBEventConfig tailordb = 3;
+    ExecutorIdPEventConfig idp = 4;
+    ExecutorAuthEventConfig auth = 5;
+    ExecutorPipelineEventConfig pipeline = 6;
+  }
+}
+
+message ExecutorTailorDBEventConfig {
+  repeated string event_types = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^tailordb\\."
+  ];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+  Script condition = 4;
+}
+
+message ExecutorIdPEventConfig {
+  repeated string event_types = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^idp\\."
+  ];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  Script condition = 3;
+}
+
+message ExecutorAuthEventConfig {
+  repeated string event_types = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^auth\\."
+  ];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  Script condition = 3;
+}
+
+message ExecutorPipelineEventConfig {
+  repeated string event_types = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^pipeline\\."
+  ];
+  string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string resolver_name = 3 [(buf.validate.field).string.min_len = 1];
+  Script condition = 4;
 }
 
 message ExecutorTriggerIncomingWebhookConfig {
