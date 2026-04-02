@@ -4,7 +4,7 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "tailor/v1/resource.proto";
-import "tailor/v1/telemetry_export_resource.proto";
+import "tailor/v1/telemetryrouter_resource.proto";
 
 message CreateTelemetryExportRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];

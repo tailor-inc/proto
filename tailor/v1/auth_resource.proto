@@ -250,6 +250,12 @@ message AuthConnection {
     ];
   }
   google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_UNAUTHORIZED = 1;
+    STATUS_AUTHORIZED = 2;
+  }
+  Status status = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 // Auth OAuth2 Client ------------------------------------------------

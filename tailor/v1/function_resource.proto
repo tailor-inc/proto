@@ -10,6 +10,14 @@ message FunctionErrorInfo {
   string message = 2 [(buf.validate.field).string.max_len = 256];
 }
 
+enum FunctionErrorKind {
+  FUNCTION_ERROR_KIND_UNSPECIFIED = 0;
+  FUNCTION_ERROR_KIND_NONE = 1;
+  FUNCTION_ERROR_KIND_USER_RUNTIME = 2;
+  FUNCTION_ERROR_KIND_USER_NON_RUNTIME = 3;
+  FUNCTION_ERROR_KIND_PLATFORM = 4;
+}
+
 message FunctionExecution {
   string id = 1 [(buf.validate.field).string.uuid = true];
   string workspace_id = 2 [(buf.validate.field).string.uuid = true];
@@ -37,4 +45,5 @@ message FunctionExecution {
   }
   string result = 9;
   FunctionErrorInfo error = 10;
+  FunctionErrorKind error_kind = 11;
 }

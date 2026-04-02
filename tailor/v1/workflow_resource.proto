@@ -68,6 +68,7 @@ message WorkflowJobExecution {
     STATUS_SUSPEND = 2;
     STATUS_SUCCESS = 3;
     STATUS_FAILED = 4;
+    STATUS_WAITING = 5;
   }
   string execution_id = 4; // execution_id in Function Execution
   google.protobuf.Timestamp started_at = 5;
@@ -86,6 +87,7 @@ message WorkflowExecution {
     STATUS_SUCCESS = 4;
     STATUS_FAILED = 5;
     STATUS_PENDING_RETRY = 6;
+    STATUS_WAITING = 7;
   }
   repeated WorkflowJobExecution job_executions = 4;
   google.protobuf.Timestamp started_at = 5;

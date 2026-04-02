@@ -16,7 +16,7 @@ import "tailor/v1/secret_manager.proto";
 import "tailor/v1/stateflow.proto";
 import "tailor/v1/staticwebsite.proto";
 import "tailor/v1/tailordb.proto";
-import "tailor/v1/telemetry_export.proto";
+import "tailor/v1/telemetryrouter.proto";
 import "tailor/v1/workflow.proto";
 import "tailor/v1/workspace.proto";
 
