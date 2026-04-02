@@ -30,6 +30,7 @@ message CreateIdPServiceRequest {
   bool publish_user_events = 6;
   IdPDisableGqlOperations disable_gql_operations = 7;
   IdPEmailConfig email_config = 8;
+  IdPPermission permission = 9;
 }
 message CreateIdPServiceResponse {
   IdPService idp_service = 1;
@@ -47,6 +48,7 @@ message UpdateIdPServiceRequest {
   bool publish_user_events = 6;
   IdPDisableGqlOperations disable_gql_operations = 7;
   IdPEmailConfig email_config = 8;
+  IdPPermission permission = 9;
 }
 message UpdateIdPServiceResponse {
   IdPService idp_service = 1;
