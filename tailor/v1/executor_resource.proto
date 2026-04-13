@@ -107,6 +107,15 @@ message ExecutorPipelineEventConfig {
 
 message ExecutorTriggerIncomingWebhookConfig {
   string secret = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  ExecutorTriggerIncomingWebhookResponseConfig response = 2;
+}
+
+message ExecutorTriggerIncomingWebhookResponseConfig {
+  Script body = 1;
+  optional int32 status_code = 2 [(buf.validate.field).int32 = {
+    gte: 100
+    lte: 599
+  }];
 }
 
 enum ExecutorTargetType {
