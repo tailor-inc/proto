@@ -47,6 +47,7 @@ message AuthIDPConfig {
     reserved 2, 3; // Previously: sp_cert_base64, sp_key_base64
     string raw_metadata = 4;
     bool enable_sign_request = 5;
+    string default_redirect_url = 6;
   }
   message IDTokenConfig {
     string provider_url = 1;

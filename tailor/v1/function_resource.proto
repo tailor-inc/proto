@@ -8,6 +8,8 @@ import "google/protobuf/timestamp.proto";
 message FunctionErrorInfo {
   string name = 1 [(buf.validate.field).string.max_len = 128];
   string message = 2 [(buf.validate.field).string.max_len = 256];
+  // Only populated in GetFunctionExecution, not in ListFunctionExecutions.
+  string stack_trace = 3 [(buf.validate.field).string.max_len = 4096];
 }
 
 enum FunctionErrorKind {
