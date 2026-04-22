@@ -56,3 +56,31 @@ message TestTelemetryExportResponse {
   bool success = 1;
   string message = 2;
 }
+
+message CreateResourceAttributesConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  ResourceAttributesConfig resource_attributes_config = 2 [(buf.validate.field).required = true];
+}
+message CreateResourceAttributesConfigResponse {
+  ResourceAttributesConfig resource_attributes_config = 1;
+}
+
+message GetResourceAttributesConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetResourceAttributesConfigResponse {
+  ResourceAttributesConfig resource_attributes_config = 1;
+}
+
+message UpdateResourceAttributesConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  ResourceAttributesConfig resource_attributes_config = 2 [(buf.validate.field).required = true];
+}
+message UpdateResourceAttributesConfigResponse {
+  ResourceAttributesConfig resource_attributes_config = 1;
+}
+
+message DeleteResourceAttributesConfigRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message DeleteResourceAttributesConfigResponse {}

@@ -19,6 +19,13 @@ message WorkflowJobFunction {
   optional string script_ref = 6;
 }
 
+message ConcurrencyPolicy {
+  int32 max_concurrent_executions = 1 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 1000
+  }];
+}
+
 message RetryPolicy {
   option (buf.validate.message).cel = {
     id: "backoff_consistency"
@@ -56,6 +63,7 @@ message Workflow {
   google.protobuf.Timestamp updated_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
 
   optional RetryPolicy retry_policy = 7;
+  optional ConcurrencyPolicy concurrency_policy = 8;
 }
 
 message WorkflowJobExecution {

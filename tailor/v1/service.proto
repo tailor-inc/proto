@@ -1807,6 +1807,48 @@ service OperatorService {
   // - PermissionDenied: can view workspace but no permission to update
   // - NotFound: workspace or telemetry export does not exist or can not be accessed
   rpc TestTelemetryExport(TestTelemetryExportRequest) returns (TestTelemetryExportResponse) {}
+
+  // CreateResourceAttributesConfig creates the workspace-level resource
+  // attributes enrichment configuration (singleton per workspace).
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to create
+  // - AlreadyExists: config already exists for this workspace
+  rpc CreateResourceAttributesConfig(CreateResourceAttributesConfigRequest) returns (CreateResourceAttributesConfigResponse) {}
+
+  // GetResourceAttributesConfig returns the workspace-level resource
+  // attributes enrichment configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to read
+  // - NotFound: config does not exist for this workspace
+  rpc GetResourceAttributesConfig(GetResourceAttributesConfigRequest) returns (GetResourceAttributesConfigResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // UpdateResourceAttributesConfig updates the workspace-level resource
+  // attributes enrichment configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to update
+  // - NotFound: config does not exist for this workspace
+  rpc UpdateResourceAttributesConfig(UpdateResourceAttributesConfigRequest) returns (UpdateResourceAttributesConfigResponse) {}
+
+  // DeleteResourceAttributesConfig deletes the workspace-level resource
+  // attributes enrichment configuration.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to delete
+  // - NotFound: config does not exist for this workspace
+  rpc DeleteResourceAttributesConfig(DeleteResourceAttributesConfigRequest) returns (DeleteResourceAttributesConfigResponse) {}
 }
 
 message PingRequest {}

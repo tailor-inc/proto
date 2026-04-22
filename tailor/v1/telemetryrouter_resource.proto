@@ -22,6 +22,7 @@ message TelemetryExport {
   LogsConfig logs = 9;
   google.protobuf.Timestamp created_at = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
   google.protobuf.Timestamp updated_at = 11 [(google.api.field_behavior) = OUTPUT_ONLY];
+  reserved 12;
 }
 
 message TracesConfig {
@@ -56,4 +57,21 @@ message TelemetryExportApiKeyAuth {
 
 message TelemetryExportBearerTokenAuth {
   SecretValue secret_value = 1 [(buf.validate.field).required = true];
+}
+
+// ResourceAttributesConfig is a workspace-level singleton that controls
+// the resource attributes enriched onto outgoing telemetry signals.
+message ResourceAttributesConfig {
+  // Developer-specified prefix prepended to each microservice's own
+  // service.name (e.g. "gateway", "tailordb") to form the final
+  // service.name resource attribute on outgoing signals:
+  // "<service_name_prefix>-<service.name>".
+  string service_name_prefix = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  // Customer-side deployment environment (e.g. "production", "staging").
+  // Optional; when empty, the enricher leaves deployment.environment.name
+  // untouched. Follows OTel semconv `deployment.environment.name` semantics
+  // (free-form string; max 256 chars).
+  string deployment_environment_name = 2 [(buf.validate.field).string.max_len = 256];
+  google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
