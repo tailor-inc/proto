@@ -4,10 +4,30 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
 
 message StaticWebsite {
   string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string description = 2;
   repeated string allowed_ip_addresses = 3;
   string url = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message CustomDomain {
+  string domain = 1;
+  CustomDomainStatus status = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string traffic_cname_target = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string certificate_cname_target = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string error_message = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+enum CustomDomainStatus {
+  CUSTOM_DOMAIN_STATUS_UNSPECIFIED = 0;
+  CUSTOM_DOMAIN_STATUS_PENDING = 1;
+  CUSTOM_DOMAIN_STATUS_VERIFYING = 2;
+  CUSTOM_DOMAIN_STATUS_CERT_ISSUED = 3;
+  CUSTOM_DOMAIN_STATUS_ACTIVE = 4;
+  CUSTOM_DOMAIN_STATUS_FAILED = 5;
 }

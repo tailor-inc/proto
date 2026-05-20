@@ -4,6 +4,7 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
 import "tailor/fieldmask/v1/option.proto";
 import "tailor/v1/resource.proto";
 import "tailor/v1/workspace_resource.proto";
@@ -399,6 +400,80 @@ message GetOrganizationFolderAccessRequest {
 message GetOrganizationFolderAccessResponse {
   FolderAccess folder_access = 1;
 }
+
+// IP Restriction --------------------------------------------------------
+
+message OrganizationIPRestriction {
+  string organization_id = 1;
+  repeated string allowed_ip_addresses = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message OrganizationFolderIPRestriction {
+  string organization_id = 1;
+  string folder_id = 2;
+  repeated string allowed_ip_addresses = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message UpsertOrganizationIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  // Must contain at least one entry. To remove the restriction entirely, call
+  // DeleteOrganizationIPRestriction — an empty list here is rejected so that
+  // "rule exists" and "non-empty allowlist" stay equivalent and Get's NotFound
+  // contract is unambiguous.
+  repeated string allowed_ip_addresses = 2 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.items.string.min_len = 1
+  ];
+}
+message UpsertOrganizationIPRestrictionResponse {
+  OrganizationIPRestriction organization_ip_restriction = 1;
+}
+
+message GetOrganizationIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message GetOrganizationIPRestrictionResponse {
+  OrganizationIPRestriction organization_ip_restriction = 1;
+}
+
+message DeleteOrganizationIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message DeleteOrganizationIPRestrictionResponse {}
+
+message UpsertOrganizationFolderIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+  // Must contain at least one entry; see UpsertOrganizationIPRestrictionRequest
+  // for rationale. Use DeleteOrganizationFolderIPRestriction to clear the rule.
+  repeated string allowed_ip_addresses = 3 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.items.string.min_len = 1
+  ];
+}
+message UpsertOrganizationFolderIPRestrictionResponse {
+  OrganizationFolderIPRestriction organization_folder_ip_restriction = 1;
+}
+
+message GetOrganizationFolderIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetOrganizationFolderIPRestrictionResponse {
+  OrganizationFolderIPRestriction organization_folder_ip_restriction = 1;
+}
+
+message DeleteOrganizationFolderIPRestrictionRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  string folder_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message DeleteOrganizationFolderIPRestrictionResponse {}
 
 message CreateOrganizationTeamRequest {
   string organization_id = 1 [(buf.validate.field).string.uuid = true];

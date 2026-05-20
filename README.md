@@ -12,7 +12,7 @@ This repository contains the Protocol Buffer definitions for the Tailor Platform
 
 The [`tailor/**`](https://github.com/tailor-inc/proto/tree/main/tailor/) definitions in this repository represent the **controlplane RPCs** used to manage and configure the Tailor Platform resources.
 
-These APIs are designed to be used with various tools and services. You can also use these definitions to generate client libraries in different programming languages. The definitions are also available on the [Buf Schema Registry (BSR)](https://buf.build/tailor-inc/tailor).
+These APIs are designed to be used with various tools and services. You can also use these definitions to generate client libraries in different programming languages.
 
 Below are officially supported Client Libraries for the Tailor Platform:
 

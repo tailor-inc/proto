@@ -337,6 +337,75 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // Organization - IP Restriction ------------------------------------
+
+  // UpsertOrganizationIPRestriction creates or replaces the IP allowlist
+  // applied to all inbound dataplane traffic for an organization.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid (malformed CIDR, private /
+  //   loopback / multicast address, etc.)
+  // - PermissionDenied: caller does not have permission on the organization
+  // - NotFound: organization does not exist or can not be accessed
+  rpc UpsertOrganizationIPRestriction(UpsertOrganizationIPRestrictionRequest) returns (UpsertOrganizationIPRestrictionResponse) {}
+
+  // GetOrganizationIPRestriction returns the current IP allowlist for an
+  // organization, or NotFound if no rule is configured.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the organization
+  // - NotFound: no IP restriction is configured for the organization
+  rpc GetOrganizationIPRestriction(GetOrganizationIPRestrictionRequest) returns (GetOrganizationIPRestrictionResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DeleteOrganizationIPRestriction removes the IP allowlist for an
+  // organization. NotFound is returned if no rule is configured.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the organization
+  // - NotFound: no IP restriction is configured for the organization
+  rpc DeleteOrganizationIPRestriction(DeleteOrganizationIPRestrictionRequest) returns (DeleteOrganizationIPRestrictionResponse) {}
+
+  // Organization Folder - IP Restriction -----------------------------
+
+  // UpsertOrganizationFolderIPRestriction creates or replaces the IP
+  // allowlist applied to all inbound dataplane traffic for a folder.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the folder
+  // - NotFound: folder does not exist or can not be accessed
+  rpc UpsertOrganizationFolderIPRestriction(UpsertOrganizationFolderIPRestrictionRequest) returns (UpsertOrganizationFolderIPRestrictionResponse) {}
+
+  // GetOrganizationFolderIPRestriction returns the current IP allowlist
+  // for a folder, or NotFound if no rule is configured.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the folder
+  // - NotFound: no IP restriction is configured for the folder
+  rpc GetOrganizationFolderIPRestriction(GetOrganizationFolderIPRestrictionRequest) returns (GetOrganizationFolderIPRestrictionResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DeleteOrganizationFolderIPRestriction removes the IP allowlist for a
+  // folder. NotFound is returned if no rule is configured.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the folder
+  // - NotFound: no IP restriction is configured for the folder
+  rpc DeleteOrganizationFolderIPRestriction(DeleteOrganizationFolderIPRestrictionRequest) returns (DeleteOrganizationFolderIPRestrictionResponse) {}
+
   // Organization - Team ----------------------------------------------
 
   // CreateOrganizationTeam creates a team in an organization.
@@ -1505,6 +1574,44 @@ service OperatorService {
   rpc ListStaticWebsites(ListStaticWebsitesRequest) returns (ListStaticWebsitesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  // AddCustomDomain registers a custom domain for a static website.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: static website does not exist
+  // - AlreadyExists: domain is already registered
+  // - ResourceExhausted: maximum number of custom domains reached
+  rpc AddCustomDomain(AddCustomDomainRequest) returns (AddCustomDomainResponse) {}
+
+  // GetCustomDomain gets a custom domain.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: custom domain does not exist
+  rpc GetCustomDomain(GetCustomDomainRequest) returns (GetCustomDomainResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListCustomDomains lists custom domains for a static website.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: static website does not exist
+  rpc ListCustomDomains(ListCustomDomainsRequest) returns (ListCustomDomainsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // RemoveCustomDomain removes a custom domain.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: custom domain does not exist
+  rpc RemoveCustomDomain(RemoveCustomDomainRequest) returns (RemoveCustomDomainResponse) {}
 
   // CreateDeployment creates a new deployment.
   //

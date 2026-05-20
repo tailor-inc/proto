@@ -17,6 +17,17 @@ message TailorDBType {
   TypeConfig schema = 2;
 
   message TypeConfig {
+    option (buf.validate.message).cel = {
+      id: "type_hook_exclusivity"
+      message: "type_hook and field-level hooks cannot be defined at the same time"
+      expression: "!has(this.type_hook) || (this.fields.all(k, !has(this.fields[k].hooks)) && this.fields.all(k, this.fields[k].fields.all(nk, !has(this.fields[k].fields[nk].hooks))))"
+    };
+    option (buf.validate.message).cel = {
+      id: "type_validate_exclusivity"
+      message: "type_validate and field-level validate cannot be defined at the same time"
+      expression: "!has(this.type_validate) || (this.fields.all(k, size(this.fields[k].validate) == 0) && this.fields.all(k, this.fields[k].fields.all(nk, size(this.fields[k].fields[nk].validate) == 0)))"
+    };
+
     map<string, FieldConfig> fields = 1;
     string description = 2;
     TypeSetting settings = 3;
@@ -28,6 +39,8 @@ message TailorDBType {
     map<string, RelationshipConfig> relationships = 9;
     Permission permission = 10;
     map<string, FileConfig> files = 11;
+    optional TypeHook type_hook = 12;
+    optional TypeValidate type_validate = 13;
   }
 
   message TypeSetting {
@@ -115,6 +128,16 @@ message TailorDBType {
     optional string update_expr = 2;
     Script create = 3;
     Script update = 4;
+  }
+
+  message TypeHook {
+    Script create = 1;
+    Script update = 2;
+  }
+
+  message TypeValidate {
+    Script create = 1;
+    Script update = 2;
   }
 
   message Serial {
