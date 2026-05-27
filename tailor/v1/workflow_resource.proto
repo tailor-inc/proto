@@ -21,7 +21,7 @@ message WorkflowJobFunction {
 
 message ConcurrencyPolicy {
   int32 max_concurrent_executions = 1 [(buf.validate.field).int32 = {
-    gte: 0
+    gte: 1
     lte: 1000
   }];
 }
@@ -64,6 +64,22 @@ message Workflow {
 
   optional RetryPolicy retry_policy = 7;
   optional ConcurrencyPolicy concurrency_policy = 8;
+}
+
+// WorkflowJobFunctionExecutionPolicy defines a runtime concurrency limit shared by
+// any job function invocation that specifies a matching execution_policy_key in
+// triggerJobFunction(). The same key can be referenced by multiple job functions
+// across different workflows; they all share the same concurrency pool within the workspace.
+message WorkflowJobFunctionExecutionPolicy {
+  string id = 1;
+  string execution_policy_key = 2;
+
+  google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // When unset, the policy registers the key as valid but applies no user-defined
+  // concurrency limit (platform hard limits still apply).
+  optional ConcurrencyPolicy concurrency_policy = 5;
 }
 
 message WorkflowJobExecution {

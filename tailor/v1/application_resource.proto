@@ -5,7 +5,7 @@ package tailor.v1;
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
-import "tailor/v1/gateway_filter_resource.proto";
+import "tailor/v1/http_adapter_resource.proto";
 
 message Application {
   string name = 1;
@@ -28,7 +28,7 @@ message Application {
 
   string auth_idp_config_name = 14 [(buf.validate.field).string.pattern = "^([a-z0-9][a-z0-9-]{1,61}[a-z0-9])?$"];
 
-  repeated GatewayFilter filters = 15;
+  repeated HttpAdapter http_adapters = 15;
 }
 
 message ApplicationSchemaUpdateAttempt {

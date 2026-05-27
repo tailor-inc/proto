@@ -1773,6 +1773,59 @@ service OperatorService {
   // - FailedPrecondition: execution is not in a resumable state
   rpc TestResumeWorkflow(TestResumeWorkflowRequest) returns (TestResumeWorkflowResponse) {}
 
+  // CreateWorkflowJobFunctionExecutionPolicy creates a new workflow job function execution policy.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - AlreadyExists: policy already exists with the given execution_policy_key
+  rpc CreateWorkflowJobFunctionExecutionPolicy(CreateWorkflowJobFunctionExecutionPolicyRequest) returns (CreateWorkflowJobFunctionExecutionPolicyResponse) {}
+
+  // UpdateWorkflowJobFunctionExecutionPolicy updates a workflow job function execution policy.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: policy does not exist or can not be accessed
+  rpc UpdateWorkflowJobFunctionExecutionPolicy(UpdateWorkflowJobFunctionExecutionPolicyRequest) returns (UpdateWorkflowJobFunctionExecutionPolicyResponse) {}
+
+  // DeleteWorkflowJobFunctionExecutionPolicy deletes a workflow job function execution policy.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: policy does not exist or can not be accessed
+  rpc DeleteWorkflowJobFunctionExecutionPolicy(DeleteWorkflowJobFunctionExecutionPolicyRequest) returns (DeleteWorkflowJobFunctionExecutionPolicyResponse) {}
+
+  // GetWorkflowJobFunctionExecutionPolicy returns a workflow job function execution policy.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: policy does not exist or can not be accessed
+  rpc GetWorkflowJobFunctionExecutionPolicy(GetWorkflowJobFunctionExecutionPolicyRequest) returns (GetWorkflowJobFunctionExecutionPolicyResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // GetWorkflowJobFunctionExecutionPolicyByKey returns a workflow job function execution policy by its key.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: policy does not exist or can not be accessed
+  rpc GetWorkflowJobFunctionExecutionPolicyByKey(GetWorkflowJobFunctionExecutionPolicyByKeyRequest) returns (GetWorkflowJobFunctionExecutionPolicyByKeyResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListWorkflowJobFunctionExecutionPolicies returns workflow job function execution policies in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListWorkflowJobFunctionExecutionPolicies(ListWorkflowJobFunctionExecutionPoliciesRequest) returns (ListWorkflowJobFunctionExecutionPoliciesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // Metadata --------------------------------------------------------
 
   // SetMetadata sets metadata labels for a resource.

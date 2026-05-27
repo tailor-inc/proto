@@ -158,3 +158,55 @@ message TestResumeWorkflowRequest {
 message TestResumeWorkflowResponse {
   string execution_id = 1;
 }
+
+message CreateWorkflowJobFunctionExecutionPolicyRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+  optional ConcurrencyPolicy concurrency_policy = 3;
+}
+message CreateWorkflowJobFunctionExecutionPolicyResponse {
+  WorkflowJobFunctionExecutionPolicy policy = 1;
+}
+
+message UpdateWorkflowJobFunctionExecutionPolicyRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+  optional ConcurrencyPolicy concurrency_policy = 3;
+}
+message UpdateWorkflowJobFunctionExecutionPolicyResponse {
+  WorkflowJobFunctionExecutionPolicy policy = 1;
+}
+
+message DeleteWorkflowJobFunctionExecutionPolicyRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string id = 2 [(buf.validate.field).string.uuid = true];
+}
+message DeleteWorkflowJobFunctionExecutionPolicyResponse {}
+
+message GetWorkflowJobFunctionExecutionPolicyRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string id = 2 [(buf.validate.field).string.uuid = true];
+}
+message GetWorkflowJobFunctionExecutionPolicyResponse {
+  WorkflowJobFunctionExecutionPolicy policy = 1;
+}
+
+message GetWorkflowJobFunctionExecutionPolicyByKeyRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+}
+message GetWorkflowJobFunctionExecutionPolicyByKeyResponse {
+  WorkflowJobFunctionExecutionPolicy policy = 1;
+}
+
+message ListWorkflowJobFunctionExecutionPoliciesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListWorkflowJobFunctionExecutionPoliciesResponse {
+  repeated WorkflowJobFunctionExecutionPolicy policies = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

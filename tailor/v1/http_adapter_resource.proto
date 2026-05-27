@@ -6,12 +6,12 @@ import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 
-message GatewayFilter {
+message HttpAdapter {
   string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string path_pattern = 2 [(buf.validate.field).string.min_len = 1];
   repeated string methods = 3 [(buf.validate.field).repeated.min_items = 1];
-  string input_filter_script = 4 [(buf.validate.field).string.min_len = 1];
-  string output_filter_script = 5; // optional
+  string input_script = 4 [(buf.validate.field).string.min_len = 1];
+  string output_script = 5; // optional
   bool enabled = 6;
   int32 priority = 7;
   google.protobuf.Timestamp create_time = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
