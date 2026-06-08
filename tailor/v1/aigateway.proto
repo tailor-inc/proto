@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
+import "tailor/fieldmask/v1/option.proto";
+import "tailor/v1/aigateway_resource.proto";
+import "tailor/v1/resource.proto";
+
+message CreateAIGatewayRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string aigateway_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+  string auth_namespace = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string cors = 4 [(buf.validate.field).repeated = {
+    max_items: 64
+    items: {
+      string: {
+        min_len: 1
+        max_len: 253
+        pattern: "^(\\*|https?://(\\*|(\\*\\.)?(([\\w-]+\\.?)+)?[\\w-]+)(:\\d{1,5})?)$"
+      }
+    }
+  }];
+}
+message CreateAIGatewayResponse {
+  AIGateway aigateway = 1;
+}
+
+message UpdateAIGatewayRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string aigateway_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+  string auth_namespace = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  repeated string cors = 4 [(buf.validate.field).repeated = {
+    max_items: 64
+    items: {
+      string: {
+        min_len: 1
+        max_len: 253
+        pattern: "^(\\*|https?://(\\*|(\\*\\.)?(([\\w-]+\\.?)+)?[\\w-]+)(:\\d{1,5})?)$"
+      }
+    }
+  }];
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "auth_namespace",
+    (fieldmask.v1.masks) = "cors"
+  ];
+}
+message UpdateAIGatewayResponse {
+  AIGateway aigateway = 1;
+}
+
+message DeleteAIGatewayRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string aigateway_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+message DeleteAIGatewayResponse {}
+
+message GetAIGatewayRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string aigateway_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+message GetAIGatewayResponse {
+  AIGateway aigateway = 1;
+}
+
+message ListAIGatewaysRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListAIGatewaysResponse {
+  repeated AIGateway aigateways = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

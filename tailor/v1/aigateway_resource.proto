@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message AIGateway {
+  string name = 1;
+  string domain = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string auth_namespace = 3;
+
+  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp update_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Allowed CORS origins for browser-based clients. Each entry is one of:
+  //   - `*`                      — any origin (any scheme, any host).
+  //   - `http(s)://*`            — any host on the given scheme.
+  //   - `http(s)://*.example.com`— any subdomain of example.com on the given scheme.
+  //   - `http(s)://app.example.com` — an exact origin.
+  // An optional `:port` may be appended in all URL forms. Empty list
+  // disables cross-origin access (browsers will block any cross-origin
+  // reads).
+  repeated string cors = 6;
+}

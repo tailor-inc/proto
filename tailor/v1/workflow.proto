@@ -88,6 +88,12 @@ message UpdateWorkflowJobFunctionResponse {
   WorkflowJobFunction job_function = 1;
 }
 
+message DeleteWorkflowJobFunctionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string job_function_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteWorkflowJobFunctionResponse {}
+
 message GetWorkflowJobFunctionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string job_function_id = 2 [(buf.validate.field).string.uuid = true];

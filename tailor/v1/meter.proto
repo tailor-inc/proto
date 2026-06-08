@@ -89,3 +89,36 @@ message ListMeterEventCountsResponse {
     int64 count = 3;
   }
 }
+
+message ListMeterAITokenUsagesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  google.protobuf.Timestamp start_time = 2 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
+  google.protobuf.Duration step = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).duration = {// 1h ~ 24h
+      gte: {seconds: 3600}
+      lte: {seconds: 86400}
+    }
+  ];
+}
+
+message ListMeterAITokenUsagesResponse {
+  repeated TokenUsage usages = 1;
+
+  message TokenUsage {
+    string aigateway_name = 1;
+    // Response model name reported by the upstream provider, e.g. "gpt-5",
+    // "gemini-3-flash", "claude-sonnet-4-6".
+    string model = 2;
+    // One of: input, output, cached_input, cache_creation_input, reasoning.
+    string token_type = 3;
+    repeated Value values = 4; // tokens per step
+  }
+
+  message Value {
+    google.protobuf.Timestamp from = 1;
+    google.protobuf.Timestamp to = 2;
+    int64 count = 3;
+  }
+}

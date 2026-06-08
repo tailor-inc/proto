@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package tailor.v1;
 
+import "tailor/v1/aigateway.proto";
 import "tailor/v1/application.proto";
 import "tailor/v1/auth.proto";
 import "tailor/v1/events.proto";
@@ -566,6 +567,55 @@ service OperatorService {
   // - InvalidArgument: request is invalid
   // - NotFound: application does not exist or can not be accessed
   rpc GetApplicationSchemaHealth(GetApplicationSchemaHealthRequest) returns (GetApplicationSchemaHealthResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // AIGateway -------------------------------------------------------
+
+  // CreateAIGateway creates a new AI Gateway in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - PermissionDenied: can view workspace but no permission to create
+  // - InvalidArgument: request is invalid
+  // - AlreadyExists: an AI Gateway with the same name already exists
+  rpc CreateAIGateway(CreateAIGatewayRequest) returns (CreateAIGatewayResponse) {}
+
+  // UpdateAIGateway updates an AI Gateway. Only `auth_namespace` is mutable.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view AI Gateway but no permission to update
+  // - NotFound: AI Gateway does not exist or can not be accessed
+  rpc UpdateAIGateway(UpdateAIGatewayRequest) returns (UpdateAIGatewayResponse) {}
+
+  // DeleteAIGateway deletes an AI Gateway.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view AI Gateway but no permission to delete
+  // - NotFound: AI Gateway does not exist or can not be accessed
+  rpc DeleteAIGateway(DeleteAIGatewayRequest) returns (DeleteAIGatewayResponse) {}
+
+  // GetAIGateway returns an AI Gateway.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: AI Gateway does not exist or can not be accessed
+  rpc GetAIGateway(GetAIGatewayRequest) returns (GetAIGatewayResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListAIGateways returns AI Gateways in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListAIGateways(ListAIGatewaysRequest) returns (ListAIGatewaysResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
@@ -1447,6 +1497,12 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // ListMeterAITokenUsages returns AI Gateway token usage in a workspace,
+  // with one row per (aigateway_name, model, token_type) combination.
+  rpc ListMeterAITokenUsages(ListMeterAITokenUsagesRequest) returns (ListMeterAITokenUsagesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // IdP ------------------------------------------------------------
 
   // ListIdPServices list all namespaces under a workspace.
@@ -1579,10 +1635,11 @@ service OperatorService {
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
-  // - InvalidArgument: request is invalid
+  // - InvalidArgument: request is invalid or domain format is rejected
   // - NotFound: static website does not exist
   // - AlreadyExists: domain is already registered
   // - ResourceExhausted: maximum number of custom domains reached
+  // - FailedPrecondition: domain already has an active TLS subscription
   rpc AddCustomDomain(AddCustomDomainRequest) returns (AddCustomDomainResponse) {}
 
   // GetCustomDomain gets a custom domain.
@@ -1611,6 +1668,7 @@ service OperatorService {
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - NotFound: custom domain does not exist
+  // - FailedPrecondition: domain DNS is still active, remove DNS record before deleting
   rpc RemoveCustomDomain(RemoveCustomDomainRequest) returns (RemoveCustomDomainResponse) {}
 
   // CreateDeployment creates a new deployment.
@@ -1707,6 +1765,15 @@ service OperatorService {
   // - InvalidArgument: request is invalid
   // - NotFound: job function does not exist or can not be accessed
   rpc UpdateWorkflowJobFunction(UpdateWorkflowJobFunctionRequest) returns (UpdateWorkflowJobFunctionResponse) {}
+
+  // DeleteWorkflowJobFunction deletes a workflow job function (all versions) by name.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: job function does not exist or can not be accessed
+  // - FailedPrecondition: job function is still referenced by one or more workflows
+  rpc DeleteWorkflowJobFunction(DeleteWorkflowJobFunctionRequest) returns (DeleteWorkflowJobFunctionResponse) {}
 
   // GetWorkflowJobFunction returns a workflow job function.
   //
