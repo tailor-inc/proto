@@ -1371,6 +1371,9 @@ service OperatorService {
   // RevokeAuthConnection revokes an auth connection.
   rpc RevokeAuthConnection(RevokeAuthConnectionRequest) returns (RevokeAuthConnectionResponse) {}
 
+  // DeleteAuthConnection deletes an auth connection.
+  rpc DeleteAuthConnection(DeleteAuthConnectionRequest) returns (DeleteAuthConnectionResponse) {}
+
   // RegisterAuthConnectionSession creates a new auth connection.
   rpc RegisterAuthConnectionSession(RegisterAuthConnectionSessionRequest) returns (RegisterAuthConnectionSessionResponse) {}
 

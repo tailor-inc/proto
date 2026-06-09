@@ -389,6 +389,12 @@ message RevokeAuthConnectionRequest {
 }
 message RevokeAuthConnectionResponse {}
 
+message DeleteAuthConnectionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string connection_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+}
+message DeleteAuthConnectionResponse {}
+
 message RegisterAuthConnectionSessionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string connection_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
