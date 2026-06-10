@@ -22,4 +22,7 @@ message AIGateway {
   // disables cross-origin access (browsers will block any cross-origin
   // reads).
   repeated string cors = 6;
+
+  // The base URL of the AI gateway.
+  string url = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
