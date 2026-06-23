@@ -6,53 +6,53 @@ import "buf/validate/validate.proto";
 import "tailor/v1/resource.proto";
 import "tailor/v1/telemetryrouter_resource.proto";
 
-message CreateTelemetryExportRequest {
+message CreateOTLPExporterRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  TelemetryExport telemetry_export = 2 [(buf.validate.field).required = true];
+  OTLPExporter otlp_exporter = 2 [(buf.validate.field).required = true];
 }
-message CreateTelemetryExportResponse {
-  TelemetryExport telemetry_export = 1;
+message CreateOTLPExporterResponse {
+  OTLPExporter otlp_exporter = 1;
 }
 
-message UpdateTelemetryExportRequest {
+message UpdateOTLPExporterRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  TelemetryExport telemetry_export = 2 [(buf.validate.field).required = true];
+  OTLPExporter otlp_exporter = 2 [(buf.validate.field).required = true];
 }
-message UpdateTelemetryExportResponse {
-  TelemetryExport telemetry_export = 1;
+message UpdateOTLPExporterResponse {
+  OTLPExporter otlp_exporter = 1;
 }
 
-message GetTelemetryExportRequest {
+message GetOTLPExporterRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
 }
-message GetTelemetryExportResponse {
-  TelemetryExport telemetry_export = 1;
+message GetOTLPExporterResponse {
+  OTLPExporter otlp_exporter = 1;
 }
 
-message ListTelemetryExportsRequest {
+message ListOTLPExportersRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string page_token = 2;
   uint32 page_size = 3;
   PageDirection page_direction = 4;
 }
-message ListTelemetryExportsResponse {
-  repeated TelemetryExport telemetry_exports = 1;
+message ListOTLPExportersResponse {
+  repeated OTLPExporter otlp_exporters = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }
 
-message DeleteTelemetryExportRequest {
+message DeleteOTLPExporterRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
 }
-message DeleteTelemetryExportResponse {}
+message DeleteOTLPExporterResponse {}
 
-message TestTelemetryExportRequest {
+message TestOTLPExporterRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
 }
-message TestTelemetryExportResponse {
+message TestOTLPExporterResponse {
   bool success = 1;
   string message = 2;
 }

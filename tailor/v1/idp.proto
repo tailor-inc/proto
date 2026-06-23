@@ -36,6 +36,12 @@ message CreateIdPServiceResponse {
   IdPService idp_service = 1;
 }
 
+// UpdateIdPServiceRequest is a full replacement of the idp service config.
+// Every field on `user_auth_policy` (and the other config sub-messages) is
+// written through to storage; proto3 default values (false, "", []) overwrite
+// the previously stored value. Clients must read the current config with
+// GetIdPService and resend the entire `user_auth_policy` payload, mutating
+// only the field they intend to change. Partial updates are not supported.
 message UpdateIdPServiceRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];

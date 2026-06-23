@@ -12,7 +12,8 @@ message ListMeterRequestCountsRequest {
   google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
   google.protobuf.Duration step = 4 [
     (buf.validate.field).required = true,
-    (buf.validate.field).duration = {// 1h ~ 24h
+    (buf.validate.field).duration = {
+      // 1h ~ 24h
       gte: {seconds: 3600}
       lte: {seconds: 86400}
     }
@@ -40,7 +41,8 @@ message ListMeterExecutionCountsRequest {
   google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
   google.protobuf.Duration step = 4 [
     (buf.validate.field).required = true,
-    (buf.validate.field).duration = {// 1h ~ 24h
+    (buf.validate.field).duration = {
+      // 1h ~ 24h
       gte: {seconds: 3600}
       lte: {seconds: 86400}
     }
@@ -68,7 +70,8 @@ message ListMeterEventCountsRequest {
   google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
   google.protobuf.Duration step = 4 [
     (buf.validate.field).required = true,
-    (buf.validate.field).duration = {// 1h ~ 24h
+    (buf.validate.field).duration = {
+      // 1h ~ 24h
       gte: {seconds: 3600}
       lte: {seconds: 86400}
     }
@@ -96,7 +99,8 @@ message ListMeterAITokenUsagesRequest {
   google.protobuf.Timestamp end_time = 3 [(buf.validate.field).required = true];
   google.protobuf.Duration step = 4 [
     (buf.validate.field).required = true,
-    (buf.validate.field).duration = {// 1h ~ 24h
+    (buf.validate.field).duration = {
+      // 1h ~ 24h
       gte: {seconds: 3600}
       lte: {seconds: 86400}
     }

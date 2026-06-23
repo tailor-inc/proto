@@ -78,9 +78,7 @@ message UserProfileProviderConfig {
     string username_field = 3;
     repeated string attributes_fields = 4;
     string tenant_id_field = 5;
-    map<string, string> attribute_map = 6 [(buf.validate.field).map.keys = {
-      string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
-    }];
+    map<string, string> attribute_map = 6 [(buf.validate.field).map.keys = {string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}}];
   }
 }
 
@@ -132,9 +130,7 @@ message MachineUser {
   repeated string attributes = 5 [(buf.validate.field).repeated.items.string.uuid = true];
   google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
   google.protobuf.Timestamp updated_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
-  map<string, google.protobuf.Value> attribute_map = 8 [(buf.validate.field).map.keys = {
-    string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
-  }];
+  map<string, google.protobuf.Value> attribute_map = 8 [(buf.validate.field).map.keys = {string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}}];
 }
 
 // Auth SCIM ------------------------------------------------

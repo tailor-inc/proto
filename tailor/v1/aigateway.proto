@@ -41,10 +41,12 @@ message UpdateAIGatewayRequest {
       }
     }
   }];
+  bool disabled = 5;
 
   google.protobuf.FieldMask update_mask = 100 [
     (fieldmask.v1.masks) = "auth_namespace",
-    (fieldmask.v1.masks) = "cors"
+    (fieldmask.v1.masks) = "cors",
+    (fieldmask.v1.masks) = "disabled"
   ];
 }
 message UpdateAIGatewayResponse {

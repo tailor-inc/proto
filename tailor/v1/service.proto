@@ -581,7 +581,8 @@ service OperatorService {
   // - AlreadyExists: an AI Gateway with the same name already exists
   rpc CreateAIGateway(CreateAIGatewayRequest) returns (CreateAIGatewayResponse) {}
 
-  // UpdateAIGateway updates an AI Gateway. Only `auth_namespace` is mutable.
+  // UpdateAIGateway updates an AI Gateway. The mutable fields are
+  // `auth_namespace`, `cors`, and `disabled`.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
@@ -1368,7 +1369,7 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  // RevokeAuthConnection revokes an auth connection.
+  // RevokeAuthConnection revokes an auth connection's active session.
   rpc RevokeAuthConnection(RevokeAuthConnectionRequest) returns (RevokeAuthConnectionResponse) {}
 
   // DeleteAuthConnection deletes an auth connection.
@@ -1979,64 +1980,64 @@ service OperatorService {
   // - NotFound: machine user does not exist
   rpc DeleteControlplaneMachineUser(DeleteControlplaneMachineUserRequest) returns (DeleteControlplaneMachineUserResponse) {}
 
-  // Telemetry Export -------------------------------------------------------
+  // OTLP Exporter -------------------------------------------------------
 
-  // CreateTelemetryExport creates a new telemetry export configuration.
+  // CreateOTLPExporter creates a new OTLP exporter configuration.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - PermissionDenied: can view workspace but no permission to update
   // - NotFound: workspace does not exist or can not be accessed
-  // - AlreadyExists: telemetry export with the same name already exists
-  rpc CreateTelemetryExport(CreateTelemetryExportRequest) returns (CreateTelemetryExportResponse) {}
+  // - AlreadyExists: OTLP exporter with the same name already exists
+  rpc CreateOTLPExporter(CreateOTLPExporterRequest) returns (CreateOTLPExporterResponse) {}
 
-  // UpdateTelemetryExport updates an existing telemetry export configuration.
+  // UpdateOTLPExporter updates an existing OTLP exporter configuration.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - PermissionDenied: can view workspace but no permission to update
-  // - NotFound: workspace or telemetry export does not exist or can not be accessed
-  rpc UpdateTelemetryExport(UpdateTelemetryExportRequest) returns (UpdateTelemetryExportResponse) {}
+  // - NotFound: workspace or OTLP exporter does not exist or can not be accessed
+  rpc UpdateOTLPExporter(UpdateOTLPExporterRequest) returns (UpdateOTLPExporterResponse) {}
 
-  // GetTelemetryExport returns a telemetry export configuration.
+  // GetOTLPExporter returns an OTLP exporter configuration.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
-  // - NotFound: workspace or telemetry export does not exist or can not be accessed
-  rpc GetTelemetryExport(GetTelemetryExportRequest) returns (GetTelemetryExportResponse) {
+  // - NotFound: workspace or OTLP exporter does not exist or can not be accessed
+  rpc GetOTLPExporter(GetOTLPExporterRequest) returns (GetOTLPExporterResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  // ListTelemetryExports returns telemetry export configurations in a workspace.
+  // ListOTLPExporters returns OTLP exporter configurations in a workspace.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - NotFound: workspace does not exist or can not be accessed
-  rpc ListTelemetryExports(ListTelemetryExportsRequest) returns (ListTelemetryExportsResponse) {
+  rpc ListOTLPExporters(ListOTLPExportersRequest) returns (ListOTLPExportersResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  // DeleteTelemetryExport deletes a telemetry export configuration.
+  // DeleteOTLPExporter deletes an OTLP exporter configuration.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - PermissionDenied: can view workspace but no permission to delete
-  // - NotFound: workspace or telemetry export does not exist or can not be accessed
-  rpc DeleteTelemetryExport(DeleteTelemetryExportRequest) returns (DeleteTelemetryExportResponse) {}
+  // - NotFound: workspace or OTLP exporter does not exist or can not be accessed
+  rpc DeleteOTLPExporter(DeleteOTLPExporterRequest) returns (DeleteOTLPExporterResponse) {}
 
-  // TestTelemetryExport sends a test span to validate endpoint reachability.
+  // TestOTLPExporter sends a test span to validate endpoint reachability.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - PermissionDenied: can view workspace but no permission to update
-  // - NotFound: workspace or telemetry export does not exist or can not be accessed
-  rpc TestTelemetryExport(TestTelemetryExportRequest) returns (TestTelemetryExportResponse) {}
+  // - NotFound: workspace or OTLP exporter does not exist or can not be accessed
+  rpc TestOTLPExporter(TestOTLPExporterRequest) returns (TestOTLPExporterResponse) {}
 
   // CreateResourceAttributesConfig creates the workspace-level resource
   // attributes enrichment configuration (singleton per workspace).

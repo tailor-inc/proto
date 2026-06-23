@@ -29,6 +29,9 @@ message IdPPermission {
   repeated IdPPermissionPolicy update = 3;
   repeated IdPPermissionPolicy delete = 4;
   repeated IdPPermissionPolicy send_password_reset_email = 5;
+  // unenroll_mfa policies guard the dataplane MFA-unenroll mutation, which
+  // removes a single enrolled MFA factor from a user.
+  repeated IdPPermissionPolicy unenroll_mfa = 6;
 }
 
 message IdPPermissionPolicy {
@@ -162,6 +165,16 @@ message IdPUserAuthPolicy {
     message: "allow_self_password_reset cannot be enabled when disable_password_auth is true"
     expression: "!this.disable_password_auth || !this.allow_self_password_reset"
   };
+  option (buf.validate.message).cel = {
+    id: "require_mfa_requires_enable_mfa"
+    message: "require_mfa requires enable_mfa to be enabled"
+    expression: "!this.require_mfa || this.enable_mfa"
+  };
+  option (buf.validate.message).cel = {
+    id: "enable_mfa_requires_allowed_return_origins"
+    message: "enable_mfa requires allowed_return_origins to list at least one origin so /mfa/settings has a valid return target"
+    expression: "!this.enable_mfa || this.allowed_return_origins.size() > 0"
+  };
 
   bool use_non_email_identifier = 1;
   bool allow_self_password_reset = 2;
@@ -188,9 +201,7 @@ message IdPUserAuthPolicy {
   repeated string allowed_email_domains = 9 [(buf.validate.field).repeated = {
     unique: true
     max_items: 100
-    items: {
-      string: {hostname: true}
-    }
+    items: {string: {hostname: true}}
   }];
   // allow_google_oauth enables "Sign in with Google" for this namespace.
   // When enabled, users can authenticate using their Google account.
@@ -206,4 +217,40 @@ message IdPUserAuthPolicy {
   // Requires disable_password_auth to be true.
   // Cannot be enabled when use_non_email_identifier is true.
   bool allow_microsoft_oauth = 12;
+  // enable_mfa makes TOTP MFA available for users in this namespace. When true the
+  // Identity Platform tenant has mfaConfig.State=ENABLED. When false, MFA cannot
+  // be enrolled or challenged regardless of require_mfa.
+  bool enable_mfa = 13;
+  // require_mfa enforces TOTP MFA enrollment and challenge for password-authenticated
+  // users in this namespace. OAuth (Google/Microsoft) sign-in is not affected.
+  // Requires enable_mfa to be true.
+  bool require_mfa = 14;
+  // allowed_return_origins lists application origins (e.g. "https://app.example.com")
+  // that the IdP is allowed to redirect users back to from self-service pages such
+  // as /mfa/settings. This is intentionally separate from OIDC redirect_uri, and
+  // covers the general case of "send the user back to the app after an action in
+  // the IdP UI". Each entry must be an origin (RFC 6454, scheme + host + optional
+  // port, no path, query, or fragment). The caller's returnTo URL may freely
+  // include a path and query; the matcher extracts its origin and compares against
+  // this list.
+  //
+  // The per-item pattern is stricter than RFC 6454 by design:
+  //   - host must match [a-zA-Z0-9.-]+ (DNS-friendly), so IPv6 literals
+  //     (http://[::1]) and underscores in hostnames are not accepted
+  //   - only http and https schemes are allowed
+  //   - path / query / fragment are rejected, since matching is origin-only
+  repeated string allowed_return_origins = 15 [(buf.validate.field).repeated = {
+    unique: true
+    max_items: 50
+    items: {
+      string: {
+        pattern: "^https?://[a-zA-Z0-9.-]+(:[0-9]+)?$"
+        max_len: 253
+      }
+    }
+  }];
+  // mfa_issuer is the label shown next to the user account in authenticator apps
+  // (Google Authenticator, 1Password, etc.) when TOTP is enrolled. When empty the
+  // server falls back to "Tailor Platform IdP".
+  string mfa_issuer = 16 [(buf.validate.field).string.max_len = 64];
 }

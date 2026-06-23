@@ -25,4 +25,8 @@ message AIGateway {
 
   // The base URL of the AI gateway.
   string url = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // When true, the AI gateway stops serving traffic. Flip back to false to
+  // resume traffic. Defaults to false on create.
+  bool disabled = 8;
 }

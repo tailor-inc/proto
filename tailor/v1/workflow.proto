@@ -167,7 +167,7 @@ message TestResumeWorkflowResponse {
 
 message CreateWorkflowJobFunctionExecutionPolicyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_.-]{0,62}[a-z0-9]$"];
   optional ConcurrencyPolicy concurrency_policy = 3;
 }
 message CreateWorkflowJobFunctionExecutionPolicyResponse {
@@ -176,7 +176,7 @@ message CreateWorkflowJobFunctionExecutionPolicyResponse {
 
 message UpdateWorkflowJobFunctionExecutionPolicyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_.-]{0,62}[a-z0-9]$"];
   optional ConcurrencyPolicy concurrency_policy = 3;
 }
 message UpdateWorkflowJobFunctionExecutionPolicyResponse {
@@ -199,7 +199,7 @@ message GetWorkflowJobFunctionExecutionPolicyResponse {
 
 message GetWorkflowJobFunctionExecutionPolicyByKeyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9]$"];
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_.-]{0,62}[a-z0-9]$"];
 }
 message GetWorkflowJobFunctionExecutionPolicyByKeyResponse {
   WorkflowJobFunctionExecutionPolicy policy = 1;
