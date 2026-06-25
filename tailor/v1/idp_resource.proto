@@ -89,6 +89,10 @@ message IdPDisableGqlOperations {
   bool read = 4;
   // send_password_reset_email disables the _sendPasswordResetEmail GraphQL mutation.
   bool send_password_reset_email = 5;
+  // request_mfa_settings_url disables the _requestMfaSettingsUrl GraphQL query.
+  bool request_mfa_settings_url = 6;
+  // unenroll_mfa disables the _unenrollMfa GraphQL mutation.
+  bool unenroll_mfa = 7;
 }
 
 // IdPLang represents the IETF BCP 47 language subtag.
