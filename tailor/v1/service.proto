@@ -1364,6 +1364,9 @@ service OperatorService {
   // CreateAuthConnection creates a new auth connection.
   rpc CreateAuthConnection(CreateAuthConnectionRequest) returns (CreateAuthConnectionResponse) {}
 
+  // UpdateAuthConnection updates an auth connection.
+  rpc UpdateAuthConnection(UpdateAuthConnectionRequest) returns (UpdateAuthConnectionResponse) {}
+
   // ListAuthConnections lists all auth connections.
   rpc ListAuthConnections(ListAuthConnectionsRequest) returns (ListAuthConnectionsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;

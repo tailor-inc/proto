@@ -99,6 +99,7 @@ message TailorDBType {
       gte: 0
       lte: 12
     }];
+    bool optional_on_create = 19;
   }
 
   message RelationshipConfig {

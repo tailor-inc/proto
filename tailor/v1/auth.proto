@@ -3,8 +3,10 @@ syntax = "proto3";
 package tailor.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/field_mask.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "tailor/fieldmask/v1/option.proto";
 import "tailor/v1/auth_resource.proto";
 import "tailor/v1/resource.proto";
 
@@ -366,6 +368,26 @@ message CreateAuthConnectionRequest {
   AuthConnection connection = 2 [(buf.validate.field).required = true];
 }
 message CreateAuthConnectionResponse {}
+
+message UpdateAuthConnectionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  AuthConnection connection = 2 [(buf.validate.field).required = true];
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "type",
+    (fieldmask.v1.masks) = "oauth2.provider_url",
+    (fieldmask.v1.masks) = "oauth2.issuer_url",
+    (fieldmask.v1.masks) = "oauth2.client_id",
+    (fieldmask.v1.masks) = "oauth2.client_secret",
+    (fieldmask.v1.masks) = "oauth2.auth_url",
+    (fieldmask.v1.masks) = "oauth2.token_url"
+  ];
+}
+message UpdateAuthConnectionResponse {
+  // The updated connection. Its status reflects whether the change revoked the
+  // session (STATUS_UNAUTHORIZED) or left it intact (STATUS_AUTHORIZED).
+  AuthConnection connection = 1;
+}
 
 message ListAuthConnectionsRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
