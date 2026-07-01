@@ -118,7 +118,13 @@ message ListWorkflowJobFunctionsRequest {
 }
 
 message ListWorkflowJobFunctionsResponse {
-  repeated WorkflowJobFunction job_functions = 1;
+  // Returns the lightweight WorkflowJobFunctionSummary projection (no script /
+  // script_ref) so workspace-wide listings do not have to materialise multi-MB
+  // payloads. Field tags match WorkflowJobFunction, so the change is wire
+  // compatible for clients that only read id / name / version / created_at.
+  // Use GetWorkflowJobFunction / GetWorkflowJobFunctionByName to fetch the
+  // script body for a specific job function.
+  repeated WorkflowJobFunctionSummary job_functions = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }

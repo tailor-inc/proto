@@ -19,6 +19,22 @@ message WorkflowJobFunction {
   optional string script_ref = 6;
 }
 
+// WorkflowJobFunctionSummary is the lightweight projection of WorkflowJobFunction
+// returned by list endpoints. Field tags are intentionally aligned with
+// WorkflowJobFunction so clients generated against either message can decode
+// the other on the wire. The heavy `script` (tag 3) and `script_ref` (tag 6)
+// fields are omitted; callers that need them must use the Get* endpoints.
+message WorkflowJobFunctionSummary {
+  string id = 1;
+  string name = 2;
+  int64 version = 4;
+
+  google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  reserved 3, 6;
+  reserved "script", "script_ref";
+}
+
 message ConcurrencyPolicy {
   int32 max_concurrent_executions = 1 [(buf.validate.field).int32 = {
     gte: 1
