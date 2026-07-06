@@ -1871,7 +1871,7 @@ service OperatorService {
   // - NotFound: policy does not exist or can not be accessed
   rpc DeleteWorkflowJobFunctionExecutionPolicy(DeleteWorkflowJobFunctionExecutionPolicyRequest) returns (DeleteWorkflowJobFunctionExecutionPolicyResponse) {}
 
-  // GetWorkflowJobFunctionExecutionPolicy returns a workflow job function execution policy.
+  // GetWorkflowJobFunctionExecutionPolicy returns a workflow job function execution policy by name.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
