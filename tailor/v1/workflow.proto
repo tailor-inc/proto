@@ -173,7 +173,10 @@ message TestResumeWorkflowResponse {
 
 message CreateWorkflowJobFunctionExecutionPolicyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_.-]{0,62}[a-z0-9]$"];
+  // 2..64 chars, starts with [a-z0-9], middle from [a-z0-9_:.-], last char
+  // is [a-z0-9] or `*` (trailing-wildcard form). Platform does not assign
+  // meaning to the prefix's tail character; the caller decides.
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9*]$"];
   optional ConcurrencyPolicy concurrency_policy = 3;
   string execution_policy_name = 4 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
 }
@@ -206,7 +209,11 @@ message GetWorkflowJobFunctionExecutionPolicyResponse {
 
 message GetWorkflowJobFunctionExecutionPolicyByKeyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
-  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_.-]{0,62}[a-z0-9]$"];
+  // Looks up a policy by its declared key (exact or wildcard form). Pass the
+  // wildcard pattern literal (e.g. `tenant-api*`) to fetch a wildcard
+  // policy; concrete keys do not resolve here, the dispatch path uses
+  // prefix resolution instead.
+  string execution_policy_key = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9_:.-]{0,62}[a-z0-9*]$"];
 }
 message GetWorkflowJobFunctionExecutionPolicyByKeyResponse {
   WorkflowJobFunctionExecutionPolicy policy = 1;
