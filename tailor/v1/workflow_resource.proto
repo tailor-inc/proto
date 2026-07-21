@@ -84,7 +84,7 @@ message Workflow {
 
 // WorkflowJobFunctionExecutionPolicy defines a runtime concurrency limit shared by
 // any job function invocation that specifies a matching execution_policy_key in
-// triggerJobFunction(). The same key can be referenced by multiple job functions
+// startJobFunction(). The same key can be referenced by multiple job functions
 // across different workflows; they all share the same concurrency pool within the workspace.
 message WorkflowJobFunctionExecutionPolicy {
   string id = 1;

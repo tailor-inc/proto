@@ -171,6 +171,26 @@ message TestResumeWorkflowResponse {
   string execution_id = 1;
 }
 
+message StartWorkflowRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+  AuthInvoker auth_invoker = 3;
+  optional string arg = 4;
+}
+
+message StartWorkflowResponse {
+  string execution_id = 1;
+}
+
+message ResumeWorkflowExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message ResumeWorkflowExecutionResponse {
+  string execution_id = 1;
+}
+
 message CreateWorkflowJobFunctionExecutionPolicyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   // 2..64 chars, starts with [a-z0-9], middle from [a-z0-9_:.-], last char

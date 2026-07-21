@@ -21,6 +21,18 @@ message TestExecScriptResponse {
   string execution_id = 3 [(buf.validate.field).string.uuid = true];
 }
 
+message ExecScriptRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2;
+  string code = 3;
+  optional string arg = 4;
+  AuthInvoker invoker = 5;
+}
+message ExecScriptResponse {
+  string result = 1;
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
 message GetFunctionExecutionRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string execution_id = 2 [(buf.validate.field).string.uuid = true];

@@ -98,3 +98,31 @@ message GetApplicationSchemaHealthResponse {
 
   ApplicationSchemaUpdateAttempt last_schema_update_attempt = 3;
 }
+
+message CloneApplicationDataRequest {
+  string source_workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string source_application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+  string target_workspace_id = 3 [(buf.validate.field).string.uuid = true];
+  string target_application_name = 4 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+}
+message CloneApplicationDataResponse {
+  string operation_id = 1;
+}
+
+message GetCloneApplicationDataOperationRequest {
+  string source_workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string target_workspace_id = 2 [(buf.validate.field).string.uuid = true];
+  string operation_id = 3 [(buf.validate.field).string.uuid = true];
+}
+message GetCloneApplicationDataOperationResponse {
+  CloneOperationStatus status = 1;
+  string error_message = 2;
+}
+
+enum CloneOperationStatus {
+  CLONE_OPERATION_STATUS_UNSPECIFIED = 0;
+  CLONE_OPERATION_STATUS_PENDING = 1;
+  CLONE_OPERATION_STATUS_PROCESSING = 2;
+  CLONE_OPERATION_STATUS_COMPLETED = 3;
+  CLONE_OPERATION_STATUS_FAILED = 4;
+}
