@@ -64,6 +64,7 @@ message ExecutorTriggerEventConfig {
     ExecutorIdPEventConfig idp = 4;
     ExecutorAuthEventConfig auth = 5;
     ExecutorPipelineEventConfig pipeline = 6;
+    ExecutorWorkflowEventConfig workflow = 7;
   }
 }
 
@@ -103,6 +104,15 @@ message ExecutorPipelineEventConfig {
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string resolver_name = 3 [(buf.validate.field).string.min_len = 1];
   Script condition = 4;
+}
+
+message ExecutorWorkflowEventConfig {
+  repeated string event_types = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^workflow\\."
+  ];
+  string workflow_name = 2;
+  Script condition = 3;
 }
 
 message ExecutorTriggerIncomingWebhookConfig {

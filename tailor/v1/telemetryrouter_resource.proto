@@ -34,7 +34,21 @@ message MetricsConfig {
 }
 
 message LogsConfig {
+  // enabled toggles the logs signal for this exporter. Function logs are the
+  // default content of the logs signal.
   bool enabled = 1;
+  // access_logs opts this exporter into API request access logs, an additional
+  // category of the logs signal. Subordinate to enabled: an exporter receives
+  // access logs iff OTLPExporter.enabled && logs.enabled && logs.access_logs.include.
+  AccessLogsConfig access_logs = 2;
+}
+
+message AccessLogsConfig {
+  // include defaults to false; API request access logs are always collected at
+  // the gateway and streamed to the router, so this flag selects whether this
+  // exporter's destination receives them. Strictly opt-in because they carry a
+  // per-request ingest cost in the customer's backend.
+  bool include = 1;
 }
 
 enum OTLPExporterProtocol {

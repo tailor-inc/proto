@@ -14,6 +14,9 @@ message CreateWorkflowRequest {
   map<string, int64> job_functions = 4;
   optional RetryPolicy retry_policy = 5;
   optional ConcurrencyPolicy concurrency_policy = 6;
+  // Enable publishing workflow-execution events
+  // (workflow.workflow_execution.*).
+  bool publish_execution_events = 7;
 }
 message CreateWorkflowResponse {
   Workflow workflow = 1;
@@ -26,6 +29,9 @@ message UpdateWorkflowRequest {
   map<string, int64> job_functions = 4;
   optional RetryPolicy retry_policy = 5;
   optional ConcurrencyPolicy concurrency_policy = 6;
+  // Enable publishing workflow-execution events
+  // (workflow.workflow_execution.*).
+  bool publish_execution_events = 7;
 }
 message UpdateWorkflowResponse {
   Workflow workflow = 1;
@@ -72,6 +78,9 @@ message CreateWorkflowJobFunctionRequest {
   string script = 3;
   // Reference to a function in the Function Registry
   optional string script_ref = 4;
+  // Enable publishing job-execution events
+  // (workflow.workflow_execution.job_execution.*).
+  bool publish_execution_events = 5;
 }
 message CreateWorkflowJobFunctionResponse {
   WorkflowJobFunction job_function = 1;
@@ -83,6 +92,9 @@ message UpdateWorkflowJobFunctionRequest {
   string script = 3;
   // Reference to a function in the Function Registry
   optional string script_ref = 4;
+  // Enable publishing job-execution events
+  // (workflow.workflow_execution.job_execution.*).
+  bool publish_execution_events = 5;
 }
 message UpdateWorkflowJobFunctionResponse {
   WorkflowJobFunction job_function = 1;

@@ -205,7 +205,9 @@ message IdPUserAuthPolicy {
   repeated string allowed_email_domains = 9 [(buf.validate.field).repeated = {
     unique: true
     max_items: 100
-    items: {string: {hostname: true}}
+    items: {
+      string: {hostname: true}
+    }
   }];
   // allow_google_oauth enables "Sign in with Google" for this namespace.
   // When enabled, users can authenticate using their Google account.
