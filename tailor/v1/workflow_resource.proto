@@ -35,6 +35,10 @@ message WorkflowJobFunctionSummary {
 
   google.protobuf.Timestamp created_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 
+  // Enable publishing job-execution events
+  // (workflow.workflow_execution.job_execution.*). Default false (opt-in).
+  bool publish_execution_events = 7;
+
   reserved 3, 6;
   reserved "script", "script_ref";
 }
