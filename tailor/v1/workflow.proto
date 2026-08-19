@@ -124,12 +124,18 @@ message GetWorkflowJobFunctionByNameResponse {
 
 message ListWorkflowJobFunctionsRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // Cursor over when each job function was created, which does not move while
+  // a job function is updated.
   string page_token = 2;
   uint32 page_size = 3;
   PageDirection page_direction = 4;
 }
 
 message ListWorkflowJobFunctionsResponse {
+  // One entry per job function name, the latest version of each, oldest job
+  // function first. Ordering is by when the job function was created, not by
+  // when the returned version was.
+  //
   // Returns the lightweight WorkflowJobFunctionSummary projection (no script /
   // script_ref) so workspace-wide listings do not have to materialise multi-MB
   // payloads. Field tags match WorkflowJobFunction, so the change is wire
@@ -138,6 +144,7 @@ message ListWorkflowJobFunctionsResponse {
   // script body for a specific job function.
   repeated WorkflowJobFunctionSummary job_functions = 1;
   string next_page_token = 2;
+  // Number of job functions, not of versions.
   int64 total_count = 3;
 }
 

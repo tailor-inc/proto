@@ -45,6 +45,12 @@ message FunctionExecution {
     STATUS_SUCCESS = 1;
     STATUS_FAILED = 2;
     STATUS_RUNNING = 3;
+    STATUS_SUSPEND = 4;
+    // Cancel was requested for a RUNNING job execution; termination is not
+    // yet confirmed.
+    STATUS_CANCELING = 5;
+    // Terminal state: cancellation confirmed.
+    STATUS_CANCELED = 6;
   }
   string logs = 5;
   google.protobuf.Timestamp started_at = 6;

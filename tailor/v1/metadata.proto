@@ -4,6 +4,7 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "tailor/v1/metadata_resource.proto";
+import "tailor/v1/resource.proto";
 
 message SetMetadataRequest {
   string trn = 1 [
@@ -11,6 +12,7 @@ message SetMetadataRequest {
     (buf.validate.field).string.pattern = "^trn:v1:workspace:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(:[a-zA-Z0-9_.:*-]+)?$"
   ];
   map<string, string> labels = 2 [
+    (buf.validate.field).map.max_pairs = 20,
     (buf.validate.field).map.keys.string.pattern = "^[a-z][a-z0-9_-]{0,62}$",
     (buf.validate.field).map.values.string.pattern = "^$|^[a-z][a-z0-9_-]{0,62}$"
   ];
@@ -31,4 +33,58 @@ message GetMetadataRequest {
 // GetMetadataResponse returns the metadata for a resource.
 message GetMetadataResponse {
   Metadata metadata = 1;
+}
+
+// BulkSetMetadataRequest sets metadata labels for multiple resources in a
+// single workspace atomically. All requests must reference TRNs under the
+// same workspace; the write is all-or-nothing.
+message BulkSetMetadataRequest {
+  repeated SetMetadataRequest requests = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.max_items = 100
+  ];
+}
+
+// BulkSetMetadataResponse returns the resulting labels for each requested TRN,
+// in the same order as BulkSetMetadataRequest.requests.
+message BulkSetMetadataResponse {
+  repeated BulkSetMetadataResult results = 1;
+}
+
+message BulkSetMetadataResult {
+  string trn = 1;
+  Metadata metadata = 2;
+}
+
+// ListMetadataRequest finds resources in a workspace whose labels match all
+// of the given key-value pairs (AND semantics).
+message ListMetadataRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  map<string, string> labels = 2 [
+    (buf.validate.field).map.min_pairs = 1,
+    (buf.validate.field).map.max_pairs = 20,
+    (buf.validate.field).map.keys.string.pattern = "^[a-z][a-z0-9_-]{0,62}$",
+    (buf.validate.field).map.values.string.pattern = "^$|^[a-z][a-z0-9_-]{0,62}$"
+  ];
+  // Opaque cursor from a previous response's next_page_token. Unlike other
+  // List* endpoints in this service, results here are ordered by TRN
+  // (lexicographic), not created_at, and page_token is not interchangeable
+  // with the pagination tokens used elsewhere.
+  string page_token = 3;
+  uint32 page_size = 4;
+  // Direction of the TRN-lexicographic ordering described above.
+  PageDirection page_direction = 5;
+}
+
+// ListMetadataResponse returns TRNs (with their full label sets) matching
+// the search criteria, ordered by TRN (lexicographic) per page_direction.
+message ListMetadataResponse {
+  repeated ListMetadataResult results = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListMetadataResult {
+  string trn = 1;
+  Metadata metadata = 2;
 }

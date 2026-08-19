@@ -104,6 +104,12 @@ message CloneApplicationDataRequest {
   string source_application_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
   string target_workspace_id = 3 [(buf.validate.field).string.uuid = true];
   string target_application_name = 4 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$"];
+
+  // Whether to also copy TailorDB file content. Defaults to false.
+  optional bool copy_files = 5;
+
+  // Whether to also copy IdP users, including their passwords. Defaults to false.
+  optional bool copy_idp_users = 6;
 }
 message CloneApplicationDataResponse {
   string operation_id = 1;
