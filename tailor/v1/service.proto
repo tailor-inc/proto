@@ -711,6 +711,10 @@ service OperatorService {
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   // - NotFound: TailorDB type does not exist or can not be accessed
+  // - FailedPrecondition: a field cannot be changed from optional to required while
+  //   existing records contain null values for it. The error carries a
+  //   google.rpc.PreconditionFailure detail with violation type
+  //   "REQUIRED_FIELD_HAS_NULL_VALUES" and the field name as subject.
   rpc UpdateTailorDBType(UpdateTailorDBTypeRequest) returns (UpdateTailorDBTypeResponse) {}
 
   // DeleteTailorDBType deletes a TailorDB type.
