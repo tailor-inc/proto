@@ -573,14 +573,15 @@ service OperatorService {
   // Clone -----------------------------------------------------------
 
   // CloneApplicationData clones data for an application from a source to a target.
-  // The RPC returns immediately and the clone runs asynchronously.
+  // The RPC returns immediately and the clone runs asynchronously. The target must be
+  // empty for every namespace and copy type in scope; a non-empty target is rejected.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - Unimplemented: feature flag is disabled
   // - InvalidArgument: request is invalid
   // - NotFound: workspace or application does not exist or cannot be accessed
-  // - FailedPrecondition: cross-region clone or namespace mismatch
+  // - FailedPrecondition: cross-region clone, namespace mismatch, or target is not empty
   rpc CloneApplicationData(CloneApplicationDataRequest) returns (CloneApplicationDataResponse) {}
 
   // GetCloneApplicationDataOperation returns the status of a clone operation.
