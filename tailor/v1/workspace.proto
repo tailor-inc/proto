@@ -156,6 +156,9 @@ message UpdateWorkspacePlatformUserResponse {}
 
 message GetWorkspacePlatformUserRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // email identifies the member to read. Use GetWorkspaceRole to read the
+  // caller's own role.
+  string email = 2 [(buf.validate.field).string.email = true];
 }
 message GetWorkspacePlatformUserResponse {
   WorkspacePlatformUser workspace_platform_user = 1;

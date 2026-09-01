@@ -52,6 +52,7 @@ message FunctionExecution {
     // Terminal state: cancellation confirmed.
     STATUS_CANCELED = 6;
   }
+  // Only populated in GetFunctionExecution, not in ListFunctionExecutions.
   string logs = 5;
   google.protobuf.Timestamp started_at = 6;
   google.protobuf.Timestamp finished_at = 7;

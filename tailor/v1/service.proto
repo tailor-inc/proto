@@ -140,17 +140,19 @@ service OperatorService {
   // - NotFound: workspace does not exist or can not be accessed
   rpc UpdateWorkspacePlatformUser(UpdateWorkspacePlatformUserRequest) returns (UpdateWorkspacePlatformUserResponse) {}
 
-  // GetWorkspacePlatformUser returns a workspace platform user.
+  // GetWorkspacePlatformUser returns the workspace platform user identified by
+  // email. GetWorkspaceRole returns the caller's own role instead.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
-  // - NotFound: workspace does not exist or can not be accessed
+  // - NotFound: workspace does not exist or can not be accessed, no platform
+  // user has that email, or the user is not a platform user of the workspace
   rpc GetWorkspacePlatformUser(GetWorkspacePlatformUserRequest) returns (GetWorkspacePlatformUserResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  // GetWorkspaceRole returns a workspace role of the platform user.
+  // GetWorkspaceRole returns the caller's own workspace role.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
