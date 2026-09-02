@@ -41,6 +41,15 @@ message GetFunctionExecutionResponse {
   FunctionExecution execution = 1;
 }
 
+message CancelJobFunctionExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+message CancelJobFunctionExecutionResponse {
+  // Status after the cancel request took effect (CANCELING or CANCELED).
+  FunctionExecution.Status status = 1;
+}
+
 message ListFunctionExecutionsRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string page_token = 2;

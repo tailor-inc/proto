@@ -1460,6 +1460,16 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // CancelJobFunctionExecution cancels an in-flight job function execution by
+  // execution_id, regardless of how it was started (workflow, executor, or
+  // directly). RUNNING transitions to CANCELING and is finalized to CANCELED
+  // by reconciliation. SUSPEND transitions directly to CANCELED. Canceling an
+  // already CANCELING/CANCELED execution succeeds (idempotent).
+  // SUCCESS/FAILED returns FailedPrecondition, as does a standard (synchronous)
+  // function execution, which is not cancelable. An unknown execution_id
+  // returns NotFound.
+  rpc CancelJobFunctionExecution(CancelJobFunctionExecutionRequest) returns (CancelJobFunctionExecutionResponse) {}
+
   // ListFunctionExecutions lists function executions.
   rpc ListFunctionExecutions(ListFunctionExecutionsRequest) returns (ListFunctionExecutionsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;

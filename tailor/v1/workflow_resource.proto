@@ -125,6 +125,11 @@ message WorkflowJobExecution {
     STATUS_SUCCESS = 3;
     STATUS_FAILED = 4;
     STATUS_WAITING = 5;
+    // Terminal state. The execution was canceled, either directly via
+    // CancelJobFunctionExecution or as a descendant of an ancestor that was
+    // canceled. Never retried automatically. Must stay integer-aligned with
+    // the controlplane enum (the operator transform casts directly).
+    STATUS_CANCELED = 6;
   }
   string execution_id = 4; // execution_id in Function Execution
   google.protobuf.Timestamp started_at = 5;
