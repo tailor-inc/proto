@@ -115,6 +115,9 @@ message AuthInvoker {
 message PersonalAccessToken {
   string name = 1;
   repeated PATScope scopes = 2;
+  google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Unset until the token is first used. Updated at most once per hour.
+  optional google.protobuf.Timestamp last_used_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 enum PATScope {
