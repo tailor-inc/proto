@@ -135,6 +135,11 @@ message IdPUserAuthPolicy {
     expression: "this.allowed_email_domains.size() == 0 || !this.use_non_email_identifier"
   };
   option (buf.validate.message).cel = {
+    id: "all_email_domains_is_exclusive"
+    message: "allowed_email_domains cannot contain other entries when * is set"
+    expression: "!('*' in this.allowed_email_domains) || this.allowed_email_domains.size() == 1"
+  };
+  option (buf.validate.message).cel = {
     id: "allow_google_oauth_requires_email_identifier"
     message: "allow_google_oauth cannot be enabled when use_non_email_identifier is true"
     expression: "!this.allow_google_oauth || !this.use_non_email_identifier"
@@ -200,19 +205,31 @@ message IdPUserAuthPolicy {
     expression: "this == 0 || (this >= 6 && this <= 4096)"
   }];
   // List of allowed email domains (e.g., ["example.com", "corp.example.com"])
+  // A single "*" entry allows every email domain, and cannot be combined with
+  // other entries. This is the only way to enable Google/Microsoft OAuth without
+  // enumerating domains, since those require allowed_email_domains to be set.
   // Empty list means all domains are allowed (backward compatible)
   // Cannot be set when use_non_email_identifier is true
   repeated string allowed_email_domains = 9 [(buf.validate.field).repeated = {
     unique: true
     max_items: 100
     items: {
-      string: {hostname: true}
+      cel: [
+        {
+          id: "allowed_email_domain"
+          message: "must be a hostname without a trailing dot, or * to allow all email domains"
+          // isHostname() accepts the trailing dot of a fully qualified domain name, but an
+          // email domain is compared verbatim against the part after "@", where the dot is
+          // never present. Such an entry would silently match nothing.
+          expression: "this == '*' || (this.isHostname() && !this.endsWith('.'))"
+        }
+      ]
     }
   }];
   // allow_google_oauth enables "Sign in with Google" for this namespace.
   // When enabled, users can authenticate using their Google account.
   // Cannot be enabled when use_non_email_identifier is true.
-  // Requires allowed_email_domains to be set.
+  // Requires allowed_email_domains to be set (["*"] to allow all domains).
   bool allow_google_oauth = 10;
   // disable_password_auth disables password-based authentication for this namespace.
   // When enabled, users cannot sign in or reset their password using email/password.
@@ -222,6 +239,7 @@ message IdPUserAuthPolicy {
   // allow_microsoft_oauth enables "Sign in with Microsoft" for this namespace.
   // Requires disable_password_auth to be true.
   // Cannot be enabled when use_non_email_identifier is true.
+  // Requires allowed_email_domains to be set (["*"] to allow all domains).
   bool allow_microsoft_oauth = 12;
   // enable_mfa makes TOTP MFA available for users in this namespace. When true the
   // Identity Platform tenant has mfaConfig.State=ENABLED. When false, MFA cannot

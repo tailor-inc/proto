@@ -1900,6 +1900,20 @@ service OperatorService {
   // - FailedPrecondition: execution is not in a resumable state
   rpc ResumeWorkflowExecution(ResumeWorkflowExecutionRequest) returns (ResumeWorkflowExecutionResponse) {}
 
+  // CancelWorkflowExecution cancels an in-flight workflow execution by
+  // execution_id. The execution and every job function execution still in
+  // flight under it are CANCELED together before the RPC returns; only the
+  // teardown of the job functions' compute happens asynchronously afterwards.
+  // CANCELED is terminal and, unlike FAILED, not resumable. Canceling an
+  // already CANCELED execution succeeds (idempotent).
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: execution does not exist or can not be accessed
+  // - FailedPrecondition: execution already reached SUCCESS or FAILED
+  rpc CancelWorkflowExecution(CancelWorkflowExecutionRequest) returns (CancelWorkflowExecutionResponse) {}
+
   // TestStartWorkflow is the deprecated legacy alias of StartWorkflow, kept so tailorctl / Console callers can migrate on their own cadence.
   //
   // Deprecated: use StartWorkflow. Scheduled for removal ~N+2 releases after all callers migrate.

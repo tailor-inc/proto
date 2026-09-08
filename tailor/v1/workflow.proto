@@ -210,6 +210,17 @@ message ResumeWorkflowExecutionResponse {
   string execution_id = 1;
 }
 
+message CancelWorkflowExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message CancelWorkflowExecutionResponse {
+  // Status after the cancel took effect. Always STATUS_CANCELED; carried so
+  // the caller does not need a follow-up GetWorkflowExecution.
+  WorkflowExecution.Status status = 1;
+}
+
 message CreateWorkflowJobFunctionExecutionPolicyRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   // 2..64 chars, starts with [a-z0-9], middle from [a-z0-9_:.-], last char

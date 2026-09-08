@@ -149,6 +149,11 @@ message WorkflowExecution {
     STATUS_FAILED = 5;
     STATUS_PENDING_RETRY = 6;
     STATUS_WAITING = 7;
+    // Terminal state. The execution was canceled via
+    // CancelWorkflowExecution. Never retried automatically and not resumable.
+    // Must stay integer-aligned with the controlplane enum (the operator
+    // transform casts directly).
+    STATUS_CANCELED = 8;
   }
   repeated WorkflowJobExecution job_executions = 4;
   google.protobuf.Timestamp started_at = 5;
