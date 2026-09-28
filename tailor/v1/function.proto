@@ -12,6 +12,7 @@ message TestExecScriptRequest {
   string name = 2;
   string code = 3;
   optional string arg = 4;
+  // Machine user the script runs as. Omit to run it as the anonymous dataplane identity.
   AuthInvoker invoker = 5;
   reserved 6; // bool tail = 6;
 }
@@ -26,6 +27,7 @@ message ExecScriptRequest {
   string name = 2;
   string code = 3;
   optional string arg = 4;
+  // Machine user the script runs as. Omit to run it as the anonymous dataplane identity.
   AuthInvoker invoker = 5;
 }
 message ExecScriptResponse {
@@ -39,6 +41,24 @@ message GetFunctionExecutionRequest {
 }
 message GetFunctionExecutionResponse {
   FunctionExecution execution = 1;
+}
+
+message StartJobFunctionRequest {
+  option (buf.validate.message).cel = {
+    id: "invoker_is_whole_or_absent"
+    message: "invoker requires both namespace and machine_user_name, or neither"
+    expression: "!has(this.invoker) || (this.invoker.namespace == '' && this.invoker.machine_user_name == '') || (this.invoker.namespace != '' && this.invoker.machine_user_name != '')"
+  };
+
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // Name of a function in the function registry.
+  string script_ref = 2 [(buf.validate.field).string.min_len = 1];
+  optional string arg = 3;
+  // Machine user the job function runs as. Omit to run it as the anonymous dataplane identity.
+  AuthInvoker invoker = 4;
+}
+message StartJobFunctionResponse {
+  string execution_id = 1 [(buf.validate.field).string.uuid = true];
 }
 
 message CancelJobFunctionExecutionRequest {

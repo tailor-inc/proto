@@ -1446,6 +1446,12 @@ service OperatorService {
 
   // Function ---------------------------------------------------------
   // ExecScript executes specified JavaScript code in which I/O operations are allowed and returns the result.
+  // Omitting invoker runs the script as the anonymous dataplane identity.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid, or invoker names only one of namespace / machine_user_name
+  // - NotFound: workspace does not exist or can not be accessed
   rpc ExecScript(ExecScriptRequest) returns (ExecScriptResponse) {}
 
   // TestExecScript is the deprecated legacy alias of ExecScript, kept so tailorctl / Console callers can migrate on their own cadence.
@@ -1459,6 +1465,19 @@ service OperatorService {
   rpc GetFunctionExecution(GetFunctionExecutionRequest) returns (GetFunctionExecutionResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  // StartJobFunction runs a function from the Function Registry as an
+  // asynchronous job and returns its execution id without waiting for the run
+  // to finish. It is the asynchronous counterpart of ExecScript, but takes a
+  // script_ref instead of inline code. The returned execution_id can be passed
+  // to GetFunctionExecution and CancelJobFunctionExecution.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: can view workspace but no permission to start a job function
+  // - NotFound: workspace or script_ref does not exist or can not be accessed
+  rpc StartJobFunction(StartJobFunctionRequest) returns (StartJobFunctionResponse) {}
 
   // CancelJobFunctionExecution cancels an in-flight job function execution by
   // execution_id, regardless of how it was started (workflow, executor, or
@@ -1884,6 +1903,7 @@ service OperatorService {
   }
 
   // StartWorkflow starts a workflow execution.
+  // Omitting auth_invoker runs the execution as the anonymous dataplane identity.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid

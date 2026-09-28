@@ -173,6 +173,7 @@ message ListWorkflowExecutionsResponse {
 message TestStartWorkflowRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+  // Machine user the execution runs as. Omit to run it as the anonymous dataplane identity.
   AuthInvoker auth_invoker = 3;
   optional string arg = 4;
 }
@@ -193,6 +194,7 @@ message TestResumeWorkflowResponse {
 message StartWorkflowRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string workflow_id = 2 [(buf.validate.field).string.uuid = true];
+  // Machine user the execution runs as. Omit to run it as the anonymous dataplane identity.
   AuthInvoker auth_invoker = 3;
   optional string arg = 4;
 }
