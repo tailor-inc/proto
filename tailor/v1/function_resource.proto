@@ -52,9 +52,8 @@ message FunctionExecution {
     // Terminal state: cancellation confirmed.
     STATUS_CANCELED = 6;
   }
-  // Deprecated: use log_entries instead. Only populated in GetFunctionExecution,
-  // not in ListFunctionExecutions.
-  string logs = 5 [deprecated = true];
+  reserved 5;
+  reserved "logs";
   google.protobuf.Timestamp started_at = 6;
   google.protobuf.Timestamp finished_at = 7;
   Type type = 8 [(buf.validate.field).enum = {

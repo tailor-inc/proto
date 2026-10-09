@@ -23,3 +23,13 @@ message ControlplaneActivityLog {
   string identifier = 6;
   google.protobuf.Timestamp operated_at = 7;
 }
+
+message OrganizationActivityLog {
+  string idempotency_key = 1;
+  string organization_id = 2;
+  string actor_id = 3;
+  string resource = 4;
+  string action = 5;
+  string identifier = 6;
+  google.protobuf.Timestamp operated_at = 7;
+}

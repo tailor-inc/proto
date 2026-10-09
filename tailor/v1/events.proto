@@ -31,3 +31,16 @@ message ListControlplaneActivityLogsResponse {
   repeated ControlplaneActivityLog logs = 2;
   int64 total_count = 3;
 }
+
+message ListOrganizationActivityLogsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  string organization_id = 3 [(buf.validate.field).string.uuid = true];
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+message ListOrganizationActivityLogsResponse {
+  string next_page_token = 1;
+  repeated OrganizationActivityLog logs = 2;
+  int64 total_count = 3;
+}

@@ -1444,6 +1444,18 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // ListOrganizationActivityLogs lists controlplane activity logs of organization-level resources
+  // (organization, folders, teams, access controls, workspace placement) in a given organization.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: caller does not have permission on the organization
+  // - NotFound: organization does not exist or can not be accessed
+  rpc ListOrganizationActivityLogs(ListOrganizationActivityLogsRequest) returns (ListOrganizationActivityLogsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // Function ---------------------------------------------------------
   // ExecScript executes specified JavaScript code in which I/O operations are allowed and returns the result.
   // Omitting invoker runs the script as the anonymous dataplane identity.
