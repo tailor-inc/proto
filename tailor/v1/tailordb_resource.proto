@@ -148,6 +148,7 @@ message TailorDBType {
       pattern: "^(?:(?:%%|[^%])*)%(?:[0-9]+)?[doxX](?:(?:%%|[^%])*)$"
       max_len: 32
     }];
+    bool gapless = 4;
   }
 
   message ValidateConfig {
