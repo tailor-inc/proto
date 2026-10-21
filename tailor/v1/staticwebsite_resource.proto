@@ -30,4 +30,32 @@ enum CustomDomainStatus {
   CUSTOM_DOMAIN_STATUS_CERT_ISSUED = 3;
   CUSTOM_DOMAIN_STATUS_ACTIVE = 4;
   CUSTOM_DOMAIN_STATUS_FAILED = 5;
+  // The domain is being removed; it cannot be re-added until removal completes.
+  CUSTOM_DOMAIN_STATUS_REMOVING = 6;
+}
+
+// CustomDomainTransfer is an offer to move a custom domain from a source workspace to a target
+// workspace without re-issuing its certificate or changing DNS.
+message CustomDomainTransfer {
+  string domain = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string source_workspace_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string source_static_website_name = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string target_workspace_id = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Set on completion.
+  string target_static_website_name = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  CustomDomainTransferStatus status = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp expires_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp completed_at = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp created_at = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Unset until the source edge cache purge is confirmed; the offer cannot be accepted before then.
+  google.protobuf.Timestamp request_purged_at = 11 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+enum CustomDomainTransferStatus {
+  CUSTOM_DOMAIN_TRANSFER_STATUS_UNSPECIFIED = 0;
+  CUSTOM_DOMAIN_TRANSFER_STATUS_PENDING = 1;
+  CUSTOM_DOMAIN_TRANSFER_STATUS_COMPLETED = 2;
+  CUSTOM_DOMAIN_TRANSFER_STATUS_CANCELLED = 3;
+  CUSTOM_DOMAIN_TRANSFER_STATUS_EXPIRED = 4;
 }

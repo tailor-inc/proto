@@ -93,6 +93,8 @@ message AddCustomDomainRequest {
 }
 message AddCustomDomainResponse {
   CustomDomain custom_domain = 1;
+  // Set only when the add completed (or, on an idempotent repeat, matches) a custom domain transfer.
+  CustomDomainTransfer transfer = 2;
 }
 
 message GetCustomDomainRequest {
@@ -122,3 +124,65 @@ message RemoveCustomDomainRequest {
   ];
 }
 message RemoveCustomDomainResponse {}
+
+message RequestCustomDomainTransferRequest {
+  // The source — the caller's workspace.
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string domain = 2 [
+    (buf.validate.field).string.pattern = "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$",
+    (buf.validate.field).string.max_len = 253
+  ];
+  string target_workspace_id = 3 [(buf.validate.field).string.uuid = true];
+}
+message RequestCustomDomainTransferResponse {
+  CustomDomainTransfer transfer = 1;
+}
+
+message CancelCustomDomainTransferRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string domain = 2 [
+    (buf.validate.field).string.pattern = "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$",
+    (buf.validate.field).string.max_len = 253
+  ];
+}
+message CancelCustomDomainTransferResponse {}
+
+message AcceptCustomDomainTransferRequest {
+  // The target — the caller's workspace.
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string static_website_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+  string domain = 3 [
+    (buf.validate.field).string.pattern = "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$",
+    (buf.validate.field).string.max_len = 253
+  ];
+}
+message AcceptCustomDomainTransferResponse {
+  CustomDomain custom_domain = 1;
+  CustomDomainTransfer transfer = 2;
+}
+
+message GetCustomDomainTransferRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string domain = 2 [
+    (buf.validate.field).string.pattern = "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$",
+    (buf.validate.field).string.max_len = 253
+  ];
+}
+message GetCustomDomainTransferResponse {
+  CustomDomainTransfer transfer = 1;
+}
+
+message ListCustomDomainTransfersRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // Optional; UNSPECIFIED means no filter. A value outside the enum is rejected rather than
+  // read as "nothing matches".
+  CustomDomainTransferStatus status = 2 [(buf.validate.field).enum.defined_only = true];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+}
+message ListCustomDomainTransfersResponse {
+  repeated CustomDomainTransfer transfers = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}

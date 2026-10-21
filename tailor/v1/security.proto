@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/security_resource.proto";
+
+message ListOrganizationSecurityChecksRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationSecurityChecksResponse {
+  repeated SecurityCheck checks = 1;
+}
+
+message ListOrganizationSecurityFindingsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+  SecurityCheckType check_type = 5 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string workspace_id = 6 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  bool include_muted = 7;
+}
+message ListOrganizationSecurityFindingsResponse {
+  string next_page_token = 1;
+  int64 total_count = 2;
+  repeated SecurityFinding findings = 3;
+}
+
+message CreateOrganizationSecurityFindingMuteRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  SecurityCheckType check_type = 2 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  SecurityResource resource = 3 [(buf.validate.field).required = true];
+  string reason = 4 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 1000
+  }];
+}
+message CreateOrganizationSecurityFindingMuteResponse {
+  SecurityFindingMute mute = 1;
+}
+
+message DeleteOrganizationSecurityFindingMuteRequest {
+  string organization_id = 1 [(buf.validate.field).string.uuid = true];
+  SecurityCheckType check_type = 2 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  SecurityResource resource = 3 [(buf.validate.field).required = true];
+}
+message DeleteOrganizationSecurityFindingMuteResponse {}
+
+message ListOrganizationSecurityFindingMutesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+
+  string organization_id = 4 [(buf.validate.field).string.uuid = true];
+}
+message ListOrganizationSecurityFindingMutesResponse {
+  string next_page_token = 1;
+  int64 total_count = 2;
+  repeated SecurityFindingMute mutes = 3;
+}

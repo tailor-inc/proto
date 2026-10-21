@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+// SecurityCheckType identifies a security check.
+enum SecurityCheckType {
+  SECURITY_CHECK_TYPE_UNSPECIFIED = 0;
+  SECURITY_CHECK_TYPE_TAILORDB_TYPE_ALLOW_ALL = 1;
+  SECURITY_CHECK_TYPE_IDP_MFA_NOT_REQUIRED = 2;
+  SECURITY_CHECK_TYPE_IDP_EMAIL_DOMAIN_UNRESTRICTED = 3;
+  SECURITY_CHECK_TYPE_GATEWAY_CORS_WILDCARD = 4;
+  SECURITY_CHECK_TYPE_GATEWAY_INTROSPECTION_ENABLED = 5;
+  SECURITY_CHECK_TYPE_ROUTING_ORG_IP_RESTRICTION_MISSING = 6;
+  SECURITY_CHECK_TYPE_AUTH_MACHINE_USER_ORPHANED = 7;
+  SECURITY_CHECK_TYPE_PAM_MACHINE_USER_ADMIN = 13;
+}
+
+enum SecuritySeverity {
+  SECURITY_SEVERITY_UNSPECIFIED = 0;
+  SECURITY_SEVERITY_INFO = 1;
+  SECURITY_SEVERITY_LOW = 2;
+  SECURITY_SEVERITY_MEDIUM = 3;
+  SECURITY_SEVERITY_HIGH = 4;
+}
+
+enum SecurityCheckStatus {
+  SECURITY_CHECK_STATUS_UNSPECIFIED = 0;
+  // No unmuted findings.
+  SECURITY_CHECK_STATUS_PASS = 1;
+  // At least one unmuted finding.
+  SECURITY_CHECK_STATUS_FAIL = 2;
+  // The service that evaluates this check did not respond.
+  SECURITY_CHECK_STATUS_UNAVAILABLE = 3;
+}
+
+message TailorDBTypeRef {
+  string namespace = 1;
+  string type = 2;
+}
+
+message IdPRef {
+  string namespace = 1;
+}
+
+message ApplicationRef {
+  string name = 1;
+}
+
+message MachineUserRef {
+  string name = 1;
+}
+
+message OrganizationRef {}
+
+message SecurityResource {
+  // Empty for organization-scoped resources.
+  string workspace_id = 1 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  // Immutable UUID of the resource; the key used for mutes.
+  string resource_id = 2 [(buf.validate.field).string.uuid = true];
+  // Display reference used to link to the resource.
+  oneof ref {
+    option (buf.validate.oneof).required = true;
+    TailorDBTypeRef tailordb_type = 10;
+    IdPRef idp = 11;
+    ApplicationRef application = 12;
+    MachineUserRef machine_user = 14;
+    OrganizationRef organization = 17;
+  }
+}
+
+message SecurityCheck {
+  SecurityCheckType type = 1;
+  SecuritySeverity severity = 2;
+  string title = 3;
+  string description = 4;
+  string remediation = 5;
+  SecurityCheckStatus status = 6;
+  // Number of unmuted findings.
+  int64 finding_count = 7;
+  int64 muted_finding_count = 8;
+  google.protobuf.Timestamp evaluated_at = 9;
+}
+
+message SecurityFinding {
+  SecurityCheckType check_type = 1;
+  SecuritySeverity severity = 2;
+  SecurityResource resource = 3;
+  string detail = 4;
+  bool muted = 5;
+  string mute_reason = 6;
+}
+
+message SecurityFindingMute {
+  string organization_id = 1;
+  SecurityCheckType check_type = 2;
+  SecurityResource resource = 3;
+  string reason = 4;
+  string created_by = 5;
+  google.protobuf.Timestamp create_time = 6;
+}

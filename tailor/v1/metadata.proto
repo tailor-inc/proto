@@ -56,12 +56,13 @@ message BulkSetMetadataResult {
   Metadata metadata = 2;
 }
 
-// ListMetadataRequest finds resources in a workspace whose labels match all
-// of the given key-value pairs (AND semantics).
+// ListMetadataRequest lists labeled resources in a workspace, optionally
+// narrowed to those whose labels match all of the given key-value pairs (AND
+// semantics).
 message ListMetadataRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // When empty, every labeled resource in the workspace matches.
   map<string, string> labels = 2 [
-    (buf.validate.field).map.min_pairs = 1,
     (buf.validate.field).map.max_pairs = 20,
     (buf.validate.field).map.keys.string.pattern = "^[a-z][a-z0-9_-]{0,62}$",
     (buf.validate.field).map.values.string.pattern = "^$|^[a-z][a-z0-9_-]{0,62}$"
