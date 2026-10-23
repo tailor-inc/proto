@@ -29,10 +29,20 @@ enum FunctionLogSeverity {
   FUNCTION_LOG_SEVERITY_ERROR = 50;
 }
 
+// FunctionLogSource is the origin of a log entry. User console and logger
+// output collapse to USER; PLATFORM marks entries the function platform emits
+// itself, which clients surface apart from user output.
+enum FunctionLogSource {
+  FUNCTION_LOG_SOURCE_UNSPECIFIED = 0;
+  FUNCTION_LOG_SOURCE_USER = 1;
+  FUNCTION_LOG_SOURCE_PLATFORM = 2;
+}
+
 message FunctionLogEntry {
   string message = 1;
   FunctionLogSeverity severity = 2;
   google.protobuf.Timestamp timestamp = 3;
+  FunctionLogSource source = 4;
 }
 
 message FunctionExecution {
@@ -73,4 +83,8 @@ message FunctionExecution {
   string content_hash = 12;
   // Only populated in GetFunctionExecution, not in ListFunctionExecutions.
   repeated FunctionLogEntry log_entries = 13;
+  // Whether this execution has any log entry with source FUNCTION_LOG_SOURCE_PLATFORM.
+  // Unlike log_entries it is populated in ListFunctionExecutions too, so a client can
+  // flag executions carrying platform notices without loading the full log stream.
+  bool has_platform_logs = 14;
 }
