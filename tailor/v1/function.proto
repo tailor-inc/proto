@@ -79,7 +79,7 @@ message ListFunctionExecutionsRequest {
   string sort_by = 6 [(buf.validate.field).string.pattern = "^([a-z_][a-z0-9_]*)?$"];
 }
 message ListFunctionExecutionsResponse {
-  repeated FunctionExecution executions = 1;
+  repeated FunctionExecutionSummary executions = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }

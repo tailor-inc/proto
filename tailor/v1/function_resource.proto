@@ -88,3 +88,32 @@ message FunctionExecution {
   // flag executions carrying platform notices without loading the full log stream.
   bool has_platform_logs = 14;
 }
+
+// FunctionExecutionSummary is the lightweight projection of FunctionExecution
+// returned by ListFunctionExecutions. Field tags are intentionally aligned with
+// FunctionExecution so clients generated against either message can decode the
+// other on the wire. The unbounded `result` (tag 9) and `log_entries` (tag 13)
+// fields are omitted; callers that need them must use GetFunctionExecution.
+message FunctionExecutionSummary {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  string workspace_id = 2 [(buf.validate.field).string.uuid = true];
+  string script_name = 3;
+  FunctionExecution.Status status = 4;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp finished_at = 7;
+  FunctionExecution.Type type = 8 [(buf.validate.field).enum = {
+    in: [
+      1,
+      2
+    ]
+  }];
+  // stack_trace is never populated.
+  FunctionErrorInfo error = 10;
+  FunctionErrorKind error_kind = 11;
+  string content_hash = 12;
+  // Whether this execution has any log entry with source FUNCTION_LOG_SOURCE_PLATFORM.
+  bool has_platform_logs = 14;
+
+  reserved 5, 9, 13;
+  reserved "logs", "result", "log_entries";
+}
