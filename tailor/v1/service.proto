@@ -12,6 +12,7 @@ import "tailor/v1/function_registry.proto";
 import "tailor/v1/idp.proto";
 import "tailor/v1/metadata.proto";
 import "tailor/v1/meter.proto";
+import "tailor/v1/notification.proto";
 import "tailor/v1/pipeline.proto";
 import "tailor/v1/secret_manager.proto";
 import "tailor/v1/security.proto";
@@ -2362,6 +2363,56 @@ service OperatorService {
   // - PermissionDenied: can view workspace but no permission to delete
   // - NotFound: config does not exist for this workspace
   rpc DeleteResourceAttributesConfig(DeleteResourceAttributesConfigRequest) returns (DeleteResourceAttributesConfigResponse) {}
+
+  // Notification ----------------------------------------------------
+
+  // ListMyNotifications lists the caller's inbox: SENT, unexpired, not dismissed,
+  // ordered by arrival. Works with a PAT of either scope.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListMyNotifications(ListMyNotificationsRequest) returns (ListMyNotificationsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // GetMyNotification returns one inbox entry. Visibility is the same as the
+  // listing, so a revoked, expired, or dismissed notification is NotFound.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: notification is not addressed to the caller or is no longer visible
+  rpc GetMyNotification(GetMyNotificationRequest) returns (GetMyNotificationResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // CountMyUnreadNotifications returns the caller's unread count for the badge.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  rpc CountMyUnreadNotifications(CountMyUnreadNotificationsRequest) returns (CountMyUnreadNotificationsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // MarkMyNotificationsRead marks notifications read. Idempotent; IDs that are
+  // not visible to the caller are ignored. Requires a token with WRITE scope.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: token has READ scope only
+  rpc MarkMyNotificationsRead(MarkMyNotificationsReadRequest) returns (MarkMyNotificationsReadResponse) {}
+
+  // DismissMyNotification removes a notification from the caller's inbox.
+  // Idempotent. Requires a token with WRITE scope.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - PermissionDenied: token has READ scope only
+  // - NotFound: notification is not addressed to the caller or is no longer visible
+  rpc DismissMyNotification(DismissMyNotificationRequest) returns (DismissMyNotificationResponse) {}
 }
 
 message PingRequest {}

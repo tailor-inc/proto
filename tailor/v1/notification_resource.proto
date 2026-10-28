@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+// NotificationCategory is what kind of notice this is.
+enum NotificationCategory {
+  NOTIFICATION_CATEGORY_UNSPECIFIED = 0;
+  NOTIFICATION_CATEGORY_ALERT = 1; // the user must act
+  NOTIFICATION_CATEGORY_INCIDENT = 2; // a platform failure
+  NOTIFICATION_CATEGORY_MAINTENANCE = 3;
+  NOTIFICATION_CATEGORY_ANNOUNCEMENT = 4;
+}
+
+// NotificationSeverity drives the Console badge colour and whether the SDK
+// CLI prints the notification after a command (WARNING and above).
+enum NotificationSeverity {
+  NOTIFICATION_SEVERITY_UNSPECIFIED = 0;
+  NOTIFICATION_SEVERITY_INFO = 1;
+  NOTIFICATION_SEVERITY_WARNING = 2;
+  NOTIFICATION_SEVERITY_CRITICAL = 3;
+}
+
+// NotificationAction is a CTA link. At most 3 per notification.
+message NotificationAction {
+  string label = 1;
+  // https:// URL or an absolute same-origin path (/...).
+  string url = 2;
+}
+
+// NotificationScopeRef says what the notification is about. A display filter
+// for the reader, never a basis for authorization.
+message NotificationScopeRef {
+  oneof ref {
+    string workspace_id = 1;
+    string organization_id = 2;
+    // Platform region label, e.g. "asia-northeast".
+    string region = 3;
+  }
+}
+
+// Notification is one inbox entry as seen by its recipient. It carries the
+// content only: who sent it and who else received it are not exposed here.
+message Notification {
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  NotificationCategory category = 2;
+  NotificationSeverity severity = 3;
+  string title = 4;
+  // CommonMark plus GFM tables, strikethrough, and task lists; never raw HTML
+  // or images. Render with a CommonMark renderer that has those extensions
+  // enabled and linkify disabled.
+  string body_markdown = 5;
+  repeated NotificationAction actions = 6;
+  repeated NotificationScopeRef scope_refs = 7;
+  // When the notification reached this recipient. The inbox is ordered by this.
+  google.protobuf.Timestamp arrived_at = 8 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Unset while unread.
+  google.protobuf.Timestamp read_at = 9 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp created_at = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Unset when the notification has no expiry.
+  google.protobuf.Timestamp expires_at = 11 [(google.api.field_behavior) = OUTPUT_ONLY];
+}

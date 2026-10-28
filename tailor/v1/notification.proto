@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/notification_resource.proto";
+import "tailor/v1/resource.proto";
+
+message ListMyNotificationsRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  // Default DESC: newest arrival first.
+  PageDirection page_direction = 3;
+  // Optional filters. Zero values mean no filter.
+  NotificationCategory category = 4 [(buf.validate.field).enum.defined_only = true];
+  // Minimum severity, inclusive.
+  NotificationSeverity min_severity = 5 [(buf.validate.field).enum.defined_only = true];
+  bool unread_only = 6;
+  // Only notifications about this workspace (scope_refs). A display filter,
+  // not authorization.
+  string scope_workspace_id = 7 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+  // Only notifications about this organization (scope_refs).
+  string scope_organization_id = 8 [
+    (buf.validate.field).string.uuid = true,
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+  ];
+}
+
+message ListMyNotificationsResponse {
+  repeated Notification notifications = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetMyNotificationRequest {
+  string notification_id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message GetMyNotificationResponse {
+  Notification notification = 1;
+}
+
+message CountMyUnreadNotificationsRequest {}
+
+message CountMyUnreadNotificationsResponse {
+  int64 unread_count = 1;
+}
+
+message MarkMyNotificationsReadRequest {
+  repeated string notification_ids = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.max_items = 100,
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.items.string.uuid = true
+  ];
+}
+
+message MarkMyNotificationsReadResponse {}
+
+message DismissMyNotificationRequest {
+  string notification_id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message DismissMyNotificationResponse {}
