@@ -1404,6 +1404,8 @@ service OperatorService {
   }
 
   // ListAuthMachineUsers lists all machine users.
+  // Returns MachineUserSummary, which omits client_secret. GetAuthMachineUser
+  // returns it instead.
   rpc ListAuthMachineUsers(ListAuthMachineUsersRequest) returns (ListAuthMachineUsersResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
@@ -1495,6 +1497,8 @@ service OperatorService {
   }
 
   // ListAuthOAuth2Client lists auth OAuth2 clients.
+  // Returns AuthOAuth2ClientSummary, which omits client_secret.
+  // GetAuthOAuth2Client returns it instead.
   rpc ListAuthOAuth2Clients(ListAuthOAuth2ClientsRequest) returns (ListAuthOAuth2ClientsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
@@ -1701,6 +1705,8 @@ service OperatorService {
   }
 
   // ListIdPClients lists all clients for the idp namespace.
+  // Returns IdPClientSummary, which omits client_secret. GetIdPClient returns it
+  // instead.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
@@ -2200,6 +2206,19 @@ service OperatorService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  // ListResources lists resources in a workspace with their metadata labels,
+  // optionally narrowed to those whose labels match all of the given
+  // key-value pairs and to the given resource types. Results come from a
+  // resource index kept in sync from controlplane events, so a newly created
+  // or deleted resource may take a few seconds to be reflected.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  rpc ListResources(ListResourcesRequest) returns (ListResourcesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // Controlplane Machine User -----------------------
 
   // CreateControlplaneMachineUser creates a Controlplane Machine User for organization or folder.
@@ -2244,6 +2263,8 @@ service OperatorService {
   }
 
   // ListControlplaneMachineUsers lists Controlplane Machine Users in organization or folder.
+  // Returns ControlplaneMachineUserSummary, which omits client_secret.
+  // GetControlplaneMachineUser returns it instead.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid

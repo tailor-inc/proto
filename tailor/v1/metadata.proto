@@ -3,6 +3,7 @@ syntax = "proto3";
 package tailor.v1;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 import "tailor/v1/metadata_resource.proto";
 import "tailor/v1/resource.proto";
 
@@ -88,4 +89,43 @@ message ListMetadataResponse {
 message ListMetadataResult {
   string trn = 1;
   Metadata metadata = 2;
+}
+
+// ListResourcesRequest lists resources in a workspace from the resource
+// index, with each resource's metadata labels. Filters and pagination match
+// ListMetadataRequest.
+message ListResourcesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // Same semantics and validation as ListMetadataRequest.labels: resources
+  // must have every given key-value pair (AND). When empty, every resource
+  // matches, including unlabeled ones.
+  map<string, string> labels = 2 [
+    (buf.validate.field).map.max_pairs = 20,
+    (buf.validate.field).map.keys.string.pattern = "^[a-z][a-z0-9_-]{0,62}$",
+    (buf.validate.field).map.values.string.pattern = "^$|^[a-z][a-z0-9_-]{0,62}$"
+  ];
+  // Opaque cursor from a previous response's next_page_token. Results are
+  // ordered by TRN (lexicographic), as in ListMetadata.
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+  // When set, only resources of these TRN resource types match, e.g.
+  // "application" or "auth_machine_user".
+  repeated string resource_types = 6 [
+    (buf.validate.field).repeated.max_items = 50,
+    (buf.validate.field).repeated.items.string.pattern = "^[a-z][a-z0-9_]{0,62}$"
+  ];
+}
+
+message ListResourcesResponse {
+  repeated ListResourcesResult resources = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListResourcesResult {
+  string trn = 1;
+  string resource_type = 2;
+  google.protobuf.Timestamp create_time = 3;
+  Metadata metadata = 4;
 }

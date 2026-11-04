@@ -247,7 +247,7 @@ message ListAuthMachineUsersRequest {
   PageDirection page_direction = 5;
 }
 message ListAuthMachineUsersResponse {
-  repeated MachineUser machine_users = 1;
+  repeated MachineUserSummary machine_users = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }
@@ -476,7 +476,7 @@ message ListAuthOAuth2ClientsRequest {
   PageDirection page_direction = 5;
 }
 message ListAuthOAuth2ClientsResponse {
-  repeated AuthOAuth2Client oauth2_clients = 1;
+  repeated AuthOAuth2ClientSummary oauth2_clients = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }
@@ -548,7 +548,7 @@ message ListControlplaneMachineUsersRequest {
 }
 
 message ListControlplaneMachineUsersResponse {
-  repeated ControlplaneMachineUser machine_users = 1;
+  repeated ControlplaneMachineUserSummary machine_users = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }

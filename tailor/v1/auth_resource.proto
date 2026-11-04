@@ -140,6 +140,24 @@ message MachineUser {
   }];
 }
 
+// MachineUserSummary is the projection of MachineUser returned by list
+// endpoints. Field tags are intentionally aligned with MachineUser so clients
+// generated against either message can decode the other on the wire. The
+// `client_secret` (tag 4) field is omitted; callers that need it must use
+// GetAuthMachineUser.
+message MachineUserSummary {
+  string id = 1;
+  string name = 2;
+  string client_id = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  repeated string attributes = 5;
+  google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  map<string, google.protobuf.Value> attribute_map = 8;
+
+  reserved 4;
+  reserved "client_secret";
+}
+
 // Auth SCIM ------------------------------------------------
 message AuthSCIMConfig {
   string machine_user_name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
@@ -312,6 +330,27 @@ message AuthOAuth2Client {
   bool require_dpop = 11;
 }
 
+// AuthOAuth2ClientSummary is the projection of AuthOAuth2Client returned by
+// list endpoints. Field tags are intentionally aligned with AuthOAuth2Client so
+// clients generated against either message can decode the other on the wire.
+// The `client_secret` (tag 6) field is omitted; callers that need it must use
+// GetAuthOAuth2Client.
+message AuthOAuth2ClientSummary {
+  string name = 1;
+  string description = 2;
+  repeated AuthOAuth2Client.GrantType grant_types = 3;
+  repeated string redirect_uris = 4;
+  string client_id = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp created_at = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+  AuthOAuth2Client.ClientType client_type = 8;
+  google.protobuf.Duration access_token_lifetime = 9;
+  google.protobuf.Duration refresh_token_lifetime = 10;
+  bool require_dpop = 11;
+
+  reserved 6;
+  reserved "client_secret";
+}
+
 message ControlplaneMachineUser {
   string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
@@ -320,4 +359,21 @@ message ControlplaneMachineUser {
   string folder_id = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
   string client_id = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
   string client_secret = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// ControlplaneMachineUserSummary is the projection of ControlplaneMachineUser
+// returned by list endpoints. Field tags are intentionally aligned with
+// ControlplaneMachineUser so clients generated against either message can
+// decode the other on the wire. The `client_secret` (tag 7) field is omitted;
+// callers that need it must use GetControlplaneMachineUser.
+message ControlplaneMachineUserSummary {
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string name = 2;
+  string description = 3;
+  string organization_id = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string folder_id = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string client_id = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  reserved 7;
+  reserved "client_secret";
 }

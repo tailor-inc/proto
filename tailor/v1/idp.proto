@@ -82,7 +82,7 @@ message ListIdPClientsRequest {
   PageDirection page_direction = 5;
 }
 message ListIdPClientsResponse {
-  repeated IdPClient clients = 1;
+  repeated IdPClientSummary clients = 1;
   string next_page_token = 2;
   int64 total_count = 3;
 }
@@ -90,7 +90,7 @@ message ListIdPClientsResponse {
 message CreateIdPClientRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string namespace_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
-  IdPClient client = 3;
+  IdPClient client = 3 [(buf.validate.field).required = true];
 }
 message CreateIdPClientResponse {
   IdPClient client = 1;

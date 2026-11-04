@@ -117,9 +117,21 @@ message IdPEmailConfig {
 }
 
 message IdPClient {
-  string name = 1;
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   string client_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
   string client_secret = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+// IdPClientSummary is the projection of IdPClient returned by list endpoints.
+// Field tags are intentionally aligned with IdPClient so clients generated
+// against either message can decode the other on the wire. The `client_secret`
+// (tag 3) field is omitted; callers that need it must use GetIdPClient.
+message IdPClientSummary {
+  string name = 1;
+  string client_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  reserved 3;
+  reserved "client_secret";
 }
 
 message IdPUserAuthPolicy {
