@@ -14,6 +14,7 @@ import "tailor/v1/metadata.proto";
 import "tailor/v1/meter.proto";
 import "tailor/v1/notification.proto";
 import "tailor/v1/pipeline.proto";
+import "tailor/v1/sandbox.proto";
 import "tailor/v1/secret_manager.proto";
 import "tailor/v1/security.proto";
 import "tailor/v1/stateflow.proto";
@@ -2162,6 +2163,68 @@ service OperatorService {
   // - Unauthenticated: token is missing, expired, or invalid
   // - InvalidArgument: request is invalid
   rpc ListWorkflowJobFunctionExecutionPolicies(ListWorkflowJobFunctionExecutionPoliciesRequest) returns (ListWorkflowJobFunctionExecutionPoliciesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // Sandbox ---------------------------------------------------------
+
+  // ListSandboxTemplates returns the platform-curated sandbox templates.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  rpc ListSandboxTemplates(ListSandboxTemplatesRequest) returns (ListSandboxTemplatesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListSandboxes returns sandboxes in a given workspace.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListSandboxes(ListSandboxesRequest) returns (ListSandboxesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // GetSandbox returns a sandbox.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - NotFound: sandbox does not exist or can not be accessed
+  rpc GetSandbox(GetSandboxRequest) returns (GetSandboxResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // DestroySandbox destroys a sandbox and its snapshot.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - NotFound: sandbox does not exist or can not be accessed
+  rpc DestroySandbox(DestroySandboxRequest) returns (DestroySandboxResponse) {}
+
+  // ListSandboxExecutions returns the executions of a sandbox.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - NotFound: sandbox does not exist or can not be accessed
+  rpc ListSandboxExecutions(ListSandboxExecutionsRequest) returns (ListSandboxExecutionsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // GetSandboxExecution returns a sandbox execution.
+  //
+  // [Errors]
+  // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - NotFound: execution does not exist or can not be accessed
+  rpc GetSandboxExecution(GetSandboxExecutionRequest) returns (GetSandboxExecutionResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 

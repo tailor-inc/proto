@@ -147,6 +147,11 @@ message IdPUserAuthPolicy {
     expression: "this.allowed_email_domains.size() == 0 || !this.use_non_email_identifier"
   };
   option (buf.validate.message).cel = {
+    id: "allowed_email_domains_required"
+    message: "allowed_email_domains must be set unless use_non_email_identifier is true (use * to allow all email domains)"
+    expression: "this.use_non_email_identifier || this.allowed_email_domains.size() > 0"
+  };
+  option (buf.validate.message).cel = {
     id: "all_email_domains_is_exclusive"
     message: "allowed_email_domains cannot contain other entries when * is set"
     expression: "!('*' in this.allowed_email_domains) || this.allowed_email_domains.size() == 1"
@@ -220,8 +225,10 @@ message IdPUserAuthPolicy {
   // A single "*" entry allows every email domain, and cannot be combined with
   // other entries. This is the only way to enable Google/Microsoft OAuth without
   // enumerating domains, since those require allowed_email_domains to be set.
-  // Empty list means all domains are allowed (backward compatible)
-  // Cannot be set when use_non_email_identifier is true
+  // Must list at least one entry unless use_non_email_identifier is true, in
+  // which case it cannot be set. Namespaces created before the list became
+  // required may still hold an empty list, which keeps meaning "all domains
+  // allowed" for their existing sign-in paths.
   repeated string allowed_email_domains = 9 [(buf.validate.field).repeated = {
     unique: true
     max_items: 100

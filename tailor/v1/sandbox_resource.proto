@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// SandboxTemplate is a platform-curated image. Read-only for platform users.
+message SandboxTemplate {
+  string name = 1;
+  string description = 2;
+}
+
+message Sandbox {
+  string id = 1;
+  string workspace_id = 2;
+  string name = 3;
+  string template = 4;
+  Status status = 5;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PROVISIONING = 1;
+    STATUS_RUNNING = 2;
+    STATUS_SUSPENDED = 3;
+    STATUS_DESTROYED = 4;
+    STATUS_FAILED = 5;
+  }
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp last_active_at = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  optional string failure_message = 9;
+}
+
+// SandboxExecution is one command in one sandbox. Inputs are not exposed:
+// `env` is never stored and `argv` is redacted for operators.
+message SandboxExecution {
+  string id = 1;
+  string sandbox_id = 2;
+  Status status = 3;
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_RUNNING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+    STATUS_TIMED_OUT = 4;
+    STATUS_CANCELED = 5;
+    STATUS_UNKNOWN = 6;
+  }
+  optional int32 exit_code = 4;
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp finished_at = 6;
+  // output_truncated is true when the copy kept in the result bucket stopped
+  // at the 10 MiB per-stream cap. The live stream is never capped; only the
+  // copy served after the execution finished is partial.
+  bool output_truncated = 7;
+}

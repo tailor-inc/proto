@@ -126,6 +126,8 @@ message ListResourcesResponse {
 message ListResourcesResult {
   string trn = 1;
   string resource_type = 2;
+  // Unset when the creation time is unknown: the resource was indexed by a
+  // backfill, and its service reports no creation time.
   google.protobuf.Timestamp create_time = 3;
   Metadata metadata = 4;
 }

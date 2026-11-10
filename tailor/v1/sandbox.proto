@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package tailor.v1;
+
+import "buf/validate/validate.proto";
+import "tailor/v1/resource.proto";
+import "tailor/v1/sandbox_resource.proto";
+
+message ListSandboxTemplatesRequest {
+  string page_token = 1;
+  uint32 page_size = 2;
+  PageDirection page_direction = 3;
+}
+
+message ListSandboxTemplatesResponse {
+  repeated SandboxTemplate templates = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message ListSandboxesRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+  Filter filter = 5;
+}
+
+message ListSandboxesResponse {
+  repeated Sandbox sandboxes = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetSandboxRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string sandbox_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message GetSandboxResponse {
+  Sandbox sandbox = 1;
+}
+
+message DestroySandboxRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string sandbox_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message DestroySandboxResponse {}
+
+message ListSandboxExecutionsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string sandbox_id = 2 [(buf.validate.field).string.uuid = true];
+  string page_token = 3;
+  uint32 page_size = 4;
+  PageDirection page_direction = 5;
+  Filter filter = 6;
+}
+
+message ListSandboxExecutionsResponse {
+  repeated SandboxExecution executions = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message GetSandboxExecutionRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string execution_id = 2 [(buf.validate.field).string.uuid = true];
+}
+
+message GetSandboxExecutionResponse {
+  SandboxExecution execution = 1;
+}
