@@ -204,3 +204,112 @@ message DeleteTailorDBGQLPermissionRequest {
   string type_name = 3 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
 }
 message DeleteTailorDBGQLPermissionResponse {}
+
+message CreateTailorDBReplicationDestinationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  TailorDBReplicationDestination destination = 2 [(buf.validate.field).required = true];
+}
+message CreateTailorDBReplicationDestinationResponse {
+  TailorDBReplicationDestination destination = 1;
+}
+
+message GetTailorDBReplicationDestinationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message GetTailorDBReplicationDestinationResponse {
+  TailorDBReplicationDestination destination = 1;
+}
+
+message ListTailorDBReplicationDestinationsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListTailorDBReplicationDestinationsResponse {
+  repeated TailorDBReplicationDestination destinations = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message VerifyTailorDBReplicationDestinationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message VerifyTailorDBReplicationDestinationResponse {
+  TailorDBReplicationDestination destination = 1;
+}
+
+message DeleteTailorDBReplicationDestinationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message DeleteTailorDBReplicationDestinationResponse {}
+
+message CreateTailorDBReplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  TailorDBReplication replication = 2 [(buf.validate.field).required = true];
+}
+message CreateTailorDBReplicationResponse {
+  TailorDBReplication replication = 1;
+}
+
+message GetTailorDBReplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message GetTailorDBReplicationResponse {
+  TailorDBReplication replication = 1;
+}
+
+message ListTailorDBReplicationsRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string page_token = 2;
+  uint32 page_size = 3;
+  PageDirection page_direction = 4;
+}
+message ListTailorDBReplicationsResponse {
+  repeated TailorDBReplication replications = 1;
+  string next_page_token = 2;
+  int64 total_count = 3;
+}
+
+message UpdateTailorDBReplicationRequest {
+  // The replication is validated after the update is applied, but the request
+  // must still name a valid target.
+  option (buf.validate.message).cel = {
+    id: "update_tailordb_replication.target"
+    message: "replication.name is required and must be a valid name"
+    expression: "has(this.replication) && this.replication.name.matches('^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$')"
+  };
+
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  // Validated after the masked fields are applied to the stored replication,
+  // so a partial update need not carry every required field.
+  TailorDBReplication replication = 2 [(buf.validate.field).ignore = IGNORE_ALWAYS];
+
+  google.protobuf.FieldMask update_mask = 100 [
+    (fieldmask.v1.masks) = "enabled",
+    (fieldmask.v1.masks) = "source.types",
+    (fieldmask.v1.masks) = "destination",
+    (fieldmask.v1.masks) = "table_prefix"
+  ];
+}
+message UpdateTailorDBReplicationResponse {
+  TailorDBReplication replication = 1;
+}
+
+message DeleteTailorDBReplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message DeleteTailorDBReplicationResponse {}
+
+message GetTailorDBReplicationStatusRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+}
+message GetTailorDBReplicationStatusResponse {
+  repeated TailorDBReplicationTableStatus tables = 1;
+}

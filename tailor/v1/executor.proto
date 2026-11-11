@@ -112,6 +112,27 @@ message TriggerExecutorRequest {
   string workspace_id = 1 [(buf.validate.field).string.uuid = true];
   string executor_name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
   google.protobuf.Struct payload = 3;
+  // headers maps a header name to a string, or to a list of strings for a name sent on more than one line.
+  // Names that the edge sets or strips, that describe the connection, or that carry trace context
+  // (such as tailor-*, x-forwarded-*, host and traceparent) are rejected.
+  // The names and values together can be up to 64 KiB.
+  google.protobuf.Struct headers = 4 [
+    (buf.validate.field).cel = {
+      id: "headers_count"
+      message: "headers can hold at most 100 names"
+      expression: "size(this) <= 100"
+    },
+    (buf.validate.field).cel = {
+      id: "headers_names"
+      message: "a header name must be 1 to 256 bytes of RFC 9110 token characters"
+      expression: "this.all(k, k.matches('^[!#$%&\\'*+.^_`|~0-9A-Za-z-]+$') && size(bytes(k)) <= 256)"
+    },
+    (buf.validate.field).cel = {
+      id: "headers_values"
+      message: "a header value must be a string, or a list of 1 to 100 strings, of up to 8192 bytes each without control characters other than tab"
+      expression: "this.all(k, type(this[k]) == string ? (size(bytes(this[k])) <= 8192 && this[k].matches('^[^\\x00-\\x08\\x0a-\\x1f\\x7f]*$')) : (type(this[k]) == list && size(this[k]) >= 1 && size(this[k]) <= 100 && this[k].all(v, type(v) == string && size(bytes(v)) <= 8192 && v.matches('^[^\\x00-\\x08\\x0a-\\x1f\\x7f]*$'))))"
+    }
+  ];
 }
 
 message TriggerExecutorResponse {

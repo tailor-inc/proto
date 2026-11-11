@@ -4,7 +4,9 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 import "tailor/v1/resource.proto";
 
 message TailorDBService {
@@ -308,5 +310,121 @@ message TailorDBGQLPermission {
     PERMIT_UNSPECIFIED = 0;
     PERMIT_ALLOW = 1;
     PERMIT_DENY = 2;
+  }
+}
+
+// TailorDBReplicationDestination is an external data warehouse that
+// TailorDBReplications write into. Creating the first destination in a
+// workspace issues the workspace's replication service account, which the
+// customer grants access to the destination.
+message TailorDBReplicationDestination {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+
+  oneof kind {
+    option (buf.validate.oneof).required = true;
+
+    BigQuery bigquery = 2;
+  }
+
+  Status status = 10 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // BigQuery is a customer-owned BigQuery dataset.
+  message BigQuery {
+    // Google Cloud project ID hosting the dataset. Immutable.
+    string project = 1 [(buf.validate.field).string.pattern = "^[a-z][a-z0-9-]{4,28}[a-z0-9]$"];
+    // BigQuery dataset ID within the project. Immutable.
+    string dataset = 2 [(buf.validate.field).string = {
+      pattern: "^[a-zA-Z0-9_]+$"
+      max_len: 1024
+    }];
+    // Service account to grant `roles/bigquery.dataEditor` on the dataset and
+    // `roles/bigquery.jobUser` on the project. Every destination in the
+    // workspace shares it.
+    string service_account_email = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  }
+
+  message Status {
+    State state = 1;
+    // Why the destination is in its state, e.g. which grant is missing.
+    string message = 2;
+    google.protobuf.Timestamp last_verified_at = 3;
+  }
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    // The grant to the service account has not been verified yet.
+    STATE_PENDING_PERMISSION = 1;
+    // The grant has been verified.
+    STATE_ACTIVE = 2;
+    // The grant worked before but the last check was denied, e.g. it was revoked.
+    STATE_PERMISSION_ERROR = 3;
+  }
+}
+
+// TailorDBReplication replicates types of a TailorDB namespace into a
+// TailorDBReplicationDestination.
+message TailorDBReplication {
+  string name = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+  Source source = 2 [(buf.validate.field).required = true];
+  // Name of the TailorDBReplicationDestination to write into.
+  string destination = 3 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+  // Prefix prepended to each destination table name.
+  optional string table_prefix = 4 [(buf.validate.field).string.pattern = "^[a-zA-Z_][a-zA-Z0-9_]{0,63}$"];
+  bool enabled = 5;
+
+  message Source {
+    // TailorDB namespace to read from. Immutable.
+    string namespace = 1 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"];
+    repeated SourceType types = 2 [
+      (buf.validate.field).repeated.max_items = 1000,
+      (buf.validate.field).cel = {
+        id: "replication.source.types.unique"
+        message: "each type may appear only once"
+        expression: "this.map(t, t.name).unique()"
+      }
+    ];
+  }
+
+  message SourceType {
+    string name = 1 [(buf.validate.field).string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"];
+
+    oneof fields {
+      // Every field but these (e.g. PII). Fields added later are replicated.
+      FieldList exclude_fields = 2;
+      // Only these fields. Fields added later are not replicated.
+      FieldList include_fields = 3;
+    }
+  }
+
+  message FieldList {
+    repeated string names = 1 [(buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 1000
+      unique: true
+      items: {
+        string: {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+      }
+    }];
+  }
+}
+
+// TailorDBReplicationTableStatus is the live state of one replicated type.
+message TailorDBReplicationTableStatus {
+  string type = 1;
+  // Destination table name, table_prefix included.
+  string table = 2;
+  State state = 3;
+  google.protobuf.Timestamp backfill_completed_at = 4;
+  google.protobuf.Duration lag = 5;
+  // Last error, when state is ERROR.
+  string message = 6;
+
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    // Waiting for a backfill of the table.
+    STATE_PENDING = 1;
+    STATE_BACKFILLING = 2;
+    STATE_STREAMING = 3;
+    STATE_ERROR = 4;
   }
 }

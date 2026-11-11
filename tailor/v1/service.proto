@@ -870,6 +870,118 @@ service OperatorService {
   // - NotFound: type does not exist
   rpc DeleteTailorDBGQLPermission(DeleteTailorDBGQLPermissionRequest) returns (DeleteTailorDBGQLPermissionResponse) {}
 
+  // CreateTailorDBReplicationDestination registers an external data warehouse
+  // that replications in the workspace can write into. The response carries
+  // the workspace's replication service account, shared by every destination
+  // in the workspace, for the customer to grant access to the destination.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - AlreadyExists: a destination with the same name, or for the same dataset, already exists
+  // - FailedPrecondition: replication is not available
+  // - ResourceExhausted: the workspace reached its destination limit
+  // - Aborted: a concurrent change released the replication service account; retry
+  rpc CreateTailorDBReplicationDestination(CreateTailorDBReplicationDestinationRequest) returns (CreateTailorDBReplicationDestinationResponse) {}
+
+  // GetTailorDBReplicationDestination returns a destination with its grant status.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: destination does not exist or can not be accessed
+  rpc GetTailorDBReplicationDestination(GetTailorDBReplicationDestinationRequest) returns (GetTailorDBReplicationDestinationResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListTailorDBReplicationDestinations lists the destinations in a workspace.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListTailorDBReplicationDestinations(ListTailorDBReplicationDestinationsRequest) returns (ListTailorDBReplicationDestinationsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // VerifyTailorDBReplicationDestination re-checks the destination's grant now
+  // and records the result as its status, e.g. right after the customer grants
+  // the service account. A transient failure leaves the status unchanged.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: destination does not exist or can not be accessed
+  // - FailedPrecondition: replication is not available
+  rpc VerifyTailorDBReplicationDestination(VerifyTailorDBReplicationDestinationRequest) returns (VerifyTailorDBReplicationDestinationResponse) {}
+
+  // DeleteTailorDBReplicationDestination deletes a destination. Data already
+  // replicated to it is left intact.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: destination does not exist or can not be accessed
+  // - FailedPrecondition: a replication still writes into the destination
+  rpc DeleteTailorDBReplicationDestination(DeleteTailorDBReplicationDestinationRequest) returns (DeleteTailorDBReplicationDestinationResponse) {}
+
+  // CreateTailorDBReplication starts replicating the listed types of a
+  // namespace into a destination.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  // - AlreadyExists: a replication with the same name already exists
+  // - FailedPrecondition: replication is not available, the namespace, a type,
+  //   a field or the destination does not exist, or another replication already
+  //   writes one of the tables
+  // - ResourceExhausted: the workspace reached its replication or replicated-type limit
+  rpc CreateTailorDBReplication(CreateTailorDBReplicationRequest) returns (CreateTailorDBReplicationResponse) {}
+
+  // GetTailorDBReplication returns a replication.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: replication does not exist or can not be accessed
+  rpc GetTailorDBReplication(GetTailorDBReplicationRequest) returns (GetTailorDBReplicationResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // ListTailorDBReplications lists the replications in a workspace.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
+  rpc ListTailorDBReplications(ListTailorDBReplicationsRequest) returns (ListTailorDBReplicationsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // UpdateTailorDBReplication applies the masked fields to the stored
+  // replication and validates the result; an empty mask replaces it whole.
+  // The source namespace can not be changed.
+  //
+  // [Errors]
+  // - InvalidArgument: request or resulting replication is invalid, or it changes the source namespace
+  // - NotFound: replication does not exist or can not be accessed
+  // - FailedPrecondition: a type, a field or the destination does not exist,
+  //   or another replication already writes one of the tables
+  // - ResourceExhausted: the workspace reached its replicated-type limit
+  rpc UpdateTailorDBReplication(UpdateTailorDBReplicationRequest) returns (UpdateTailorDBReplicationResponse) {}
+
+  // DeleteTailorDBReplication stops a replication. Data already replicated to
+  // the destination is left intact.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: replication does not exist or can not be accessed
+  rpc DeleteTailorDBReplication(DeleteTailorDBReplicationRequest) returns (DeleteTailorDBReplicationResponse) {}
+
+  // GetTailorDBReplicationStatus returns the live per-table state of a replication.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid
+  // - NotFound: replication does not exist or can not be accessed
+  // - Unimplemented: replication status is not available yet
+  rpc GetTailorDBReplicationStatus(GetTailorDBReplicationStatusRequest) returns (GetTailorDBReplicationStatusResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
   // Pipeline --------------------------------------------------------
 
   // CreatePipelineService creates a new pipeline service in a given workspace.
@@ -1137,10 +1249,18 @@ service OperatorService {
   }
 
   // TriggerExecutor triggers an executor.
+  // For an incoming webhook executor, payload is delivered as the body and headers as the request headers
+  // (names lower-cased, as for a request to the webhook URL). A header is a string, or a list of strings for a
+  // name sent on more than one line; a list of one is delivered as a string, as the webhook handler does.
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
-  // - InvalidArgument: request is invalid
+  // - InvalidArgument: request is invalid, headers is set for an executor that is not an incoming webhook,
+  //   a header name is not allowed (the edge sets or strips it, it describes the connection, or it carries
+  //   trace context: tailor-*, x-tailor-*, fastly-*, x-forwarded-*, x-envoy-*, x-b3-*, proxy-*, forwarded,
+  //   via, cdn-loop, true-client-ip, x-real-ip, b3, traceparent, tracestate, baggage, x-cloud-trace-context,
+  //   host, connection, content-length, transfer-encoding, te, upgrade, keep-alive),
+  //   or the names and values of headers add up to more than 64 KiB
   rpc TriggerExecutor(TriggerExecutorRequest) returns (TriggerExecutorResponse) {}
 
   // SecretManager ---------------------------------------------------
