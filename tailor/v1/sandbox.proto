@@ -10,6 +10,8 @@ message ListSandboxTemplatesRequest {
   string page_token = 1;
   uint32 page_size = 2;
   PageDirection page_direction = 3;
+  // workspace_id is the workspace the caller reads the templates through.
+  string workspace_id = 4 [(buf.validate.field).string.uuid = true];
 }
 
 message ListSandboxTemplatesResponse {

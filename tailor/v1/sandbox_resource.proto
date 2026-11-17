@@ -48,8 +48,8 @@ message SandboxExecution {
   optional int32 exit_code = 4;
   google.protobuf.Timestamp started_at = 5;
   google.protobuf.Timestamp finished_at = 6;
-  // output_truncated is true when the copy kept in the result bucket stopped
-  // at the 10 MiB per-stream cap. The live stream is never capped; only the
-  // copy served after the execution finished is partial.
+  // output_truncated is true when a stream passed the 10 MiB per-stream limit.
+  // Output past the limit is dropped, both from the live stream (which ends
+  // with a notice line) and from the copy served after the execution finished.
   bool output_truncated = 7;
 }

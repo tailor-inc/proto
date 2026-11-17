@@ -2292,6 +2292,8 @@ service OperatorService {
   //
   // [Errors]
   // - Unauthenticated: token is missing, expired, or invalid
+  // - InvalidArgument: request is invalid
+  // - NotFound: workspace does not exist or can not be accessed
   rpc ListSandboxTemplates(ListSandboxTemplatesRequest) returns (ListSandboxTemplatesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }

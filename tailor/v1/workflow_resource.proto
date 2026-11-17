@@ -206,10 +206,17 @@ message WorkflowExecution {
     // Must stay integer-aligned with the controlplane enum (the operator
     // transform casts directly).
     STATUS_CANCELED = 8;
+    // CancelWorkflowExecution was requested and the jobs that were running
+    // are being stopped. Becomes STATUS_CANCELED once they have stopped.
+    // Nothing new starts meanwhile. Must stay integer-aligned with the
+    // controlplane enum (the operator transform casts directly).
+    STATUS_CANCELING = 9;
   }
   repeated WorkflowJobExecution job_executions = 4;
   google.protobuf.Timestamp started_at = 5;
   google.protobuf.Timestamp finished_at = 6;
   int32 retry_count = 7;
   google.protobuf.Timestamp retry_after = 8;
+  // When CancelWorkflowExecution was requested, unset if it never was.
+  google.protobuf.Timestamp cancel_requested_at = 9;
 }

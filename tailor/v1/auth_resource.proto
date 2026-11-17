@@ -181,8 +181,8 @@ message AuthSCIMResource {
 }
 
 message AuthSCIMAttributeMapping {
-  string tailor_db_field = 1;
-  string scim_path = 2;
+  string tailor_db_field = 1 [(buf.validate.field).string.pattern = "^[a-z][0-9a-zA-Z]{0,62}$"];
+  string scim_path = 2 [(buf.validate.field).string.min_len = 1];
 }
 
 message AuthSCIMSchema {
