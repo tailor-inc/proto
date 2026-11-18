@@ -218,8 +218,10 @@ message CancelWorkflowExecutionRequest {
 }
 
 message CancelWorkflowExecutionResponse {
-  // Status after the cancel took effect. Always STATUS_CANCELED; carried so
-  // the caller does not need a follow-up GetWorkflowExecution.
+  // Status after the cancel took effect, carried so the caller does not need
+  // a follow-up GetWorkflowExecution. STATUS_CANCELING while jobs that were running
+  // are being stopped (the execution becomes STATUS_CANCELED once they have),
+  // STATUS_CANCELED when nothing had to stop.
   WorkflowExecution.Status status = 1;
 }
 

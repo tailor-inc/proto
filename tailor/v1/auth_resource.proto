@@ -288,6 +288,23 @@ message AuthOAuth2Client {
     message: "require_dpop cannot be set to true for browser clients"
     expression: "this.client_type != tailor.v1.AuthOAuth2Client.ClientType.CLIENT_TYPE_BROWSER || this.require_dpop == false"
   };
+  option (buf.validate.message).cel = {
+    id: "long_refresh_token_lifetime_requires_idle_lifetime"
+    message: "refresh_token_lifetime above 7 days requires refresh_token_idle_lifetime"
+    expression: "!has(this.refresh_token_lifetime) || this.refresh_token_lifetime <= duration('604800s') || has(this.refresh_token_idle_lifetime)"
+  };
+  // The literals are the defaults applied to an unset access_token_lifetime
+  // (1 day) and refresh_token_lifetime (7 days).
+  option (buf.validate.message).cel = {
+    id: "refresh_token_idle_lifetime_lte_refresh_token_lifetime"
+    message: "refresh_token_idle_lifetime must be less than or equal to refresh_token_lifetime"
+    expression: "!has(this.refresh_token_idle_lifetime) || this.refresh_token_idle_lifetime <= (has(this.refresh_token_lifetime) ? this.refresh_token_lifetime : duration('604800s'))"
+  };
+  option (buf.validate.message).cel = {
+    id: "refresh_token_idle_lifetime_gte_access_token_lifetime"
+    message: "refresh_token_idle_lifetime must be greater than or equal to access_token_lifetime"
+    expression: "!has(this.refresh_token_idle_lifetime) || this.refresh_token_idle_lifetime >= (has(this.access_token_lifetime) ? this.access_token_lifetime : duration('86400s'))"
+  };
   string name = 1;
   string description = 2;
   enum GrantType {
@@ -319,15 +336,27 @@ message AuthOAuth2Client {
     (buf.validate.field).duration.gte = {seconds: 60},
     (buf.validate.field).duration.lte = {seconds: 86400}
   ];
-  // Optional refresh token lifetime. If not set, uses the default lifetime.
-  // Minimum allowed value is 60 seconds, maximum is 7 days (604800 seconds).
+  // Optional refresh token lifetime, counted from the first authorization and
+  // not extended by rotation. If not set, uses the default lifetime (7 days).
+  // Minimum allowed value is 60 seconds, maximum is 90 days (7776000 seconds).
+  // A value above 7 days requires refresh_token_idle_lifetime.
   google.protobuf.Duration refresh_token_lifetime = 10 [
     (buf.validate.field).duration.gte = {seconds: 60},
-    (buf.validate.field).duration.lte = {seconds: 604800}
+    (buf.validate.field).duration.lte = {seconds: 7776000}
   ];
   // When true, DPoP proof is required for token requests.
   // Cannot be set to true for browser clients as they don't support DPoP.
   bool require_dpop = 11;
+  // Optional refresh token idle lifetime. When set, a refresh token also
+  // expires once it has not been used for this long, and each refresh restarts
+  // the count without going past refresh_token_lifetime. If not set, a refresh
+  // token has no idle expiry.
+  // Minimum allowed value is 60 seconds, maximum is 30 days (2592000 seconds).
+  // Must be between access_token_lifetime and refresh_token_lifetime.
+  google.protobuf.Duration refresh_token_idle_lifetime = 12 [
+    (buf.validate.field).duration.gte = {seconds: 60},
+    (buf.validate.field).duration.lte = {seconds: 2592000}
+  ];
 }
 
 // AuthOAuth2ClientSummary is the projection of AuthOAuth2Client returned by
@@ -346,6 +375,7 @@ message AuthOAuth2ClientSummary {
   google.protobuf.Duration access_token_lifetime = 9;
   google.protobuf.Duration refresh_token_lifetime = 10;
   bool require_dpop = 11;
+  google.protobuf.Duration refresh_token_idle_lifetime = 12;
 
   reserved 6;
   reserved "client_secret";
