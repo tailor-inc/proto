@@ -313,3 +313,18 @@ message GetTailorDBReplicationStatusRequest {
 message GetTailorDBReplicationStatusResponse {
   repeated TailorDBReplicationTableStatus tables = 1;
 }
+
+message RepairTailorDBReplicationRequest {
+  string workspace_id = 1 [(buf.validate.field).string.uuid = true];
+  string name = 2 [(buf.validate.field).string.pattern = "^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"];
+  // Types whose tables to repair; empty repairs the tables in ERROR.
+  repeated string type_names = 3 [
+    (buf.validate.field).repeated.max_items = 1000,
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.items.string.pattern = "^[A-Z][a-zA-Z0-9]{0,62}$"
+  ];
+}
+message RepairTailorDBReplicationResponse {
+  // Types whose tables went to PENDING for a repair.
+  repeated string type_names = 1;
+}

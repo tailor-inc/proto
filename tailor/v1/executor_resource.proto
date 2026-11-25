@@ -192,10 +192,11 @@ message ExecutorJob {
   ExecutorJobStatus status = 3;
   google.protobuf.Struct actor = 4;
   google.protobuf.Struct data = 5;
-  string event_idempotency_key = 6;
+  string event_idempotency_key = 6 [deprecated = true];
   google.protobuf.Timestamp scheduled_at = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  string event_id = 10;
 }
 
 message ExecutorJobAttempt {

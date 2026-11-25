@@ -4,7 +4,6 @@ package tailor.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
-import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "tailor/v1/resource.proto";
@@ -102,6 +101,12 @@ message TailorDBType {
       lte: 12
     }];
     bool optional_on_create = 19;
+    // In a request, the name this field had before: declares a rename. In a
+    // response, set only while the field keeps that name as a deprecated name,
+    // together with keep_old_name. Top-level fields only.
+    optional string renamed_from = 20;
+    // Keeps the renamed_from name usable as a deprecated name.
+    bool keep_old_name = 21;
   }
 
   message RelationshipConfig {
@@ -225,7 +230,27 @@ message TailorDBType {
         string old_record_field = 3 [(buf.validate.field).string.min_len = 1];
         string new_record_field = 4 [(buf.validate.field).string.min_len = 1];
         google.protobuf.Value value = 5;
+        // Cross-relation path operands. segments is a
+        // list of relationship names ending in a field name, evaluated as an EXISTS
+        // semijoin against the derived __authz index. Anchored like the scalar field
+        // operands (record for read/delete, old_record/new_record for update).
+        // Gated by a feature flag; validate rejects these
+        // while the flag is off, so there are no physical side-effects.
+        PathOperand record_path = 6;
+        PathOperand old_record_path = 7;
+        PathOperand new_record_path = 8;
       }
+    }
+
+    message PathOperand {
+      // At least one relationship hop plus the terminal field name, and at most the hop
+      // limit the compiler enforces, so a walk that cannot be built is rejected before it is
+      // declared. Segments carry the same charset the fields and relationships they name do.
+      repeated string segments = 1 [
+        (buf.validate.field).repeated.min_items = 2,
+        (buf.validate.field).repeated.max_items = 5,
+        (buf.validate.field).repeated.items.string = {pattern: "^[a-z][0-9a-zA-Z]{0,62}$"}
+      ];
     }
 
     enum Operator {
@@ -415,8 +440,10 @@ message TailorDBReplicationTableStatus {
   string table = 2;
   State state = 3;
   google.protobuf.Timestamp backfill_completed_at = 4;
-  google.protobuf.Duration lag = 5;
-  // Last error, when state is ERROR.
+  reserved 5;
+  reserved "lag";
+  // Why the table isn't STREAMING: the last error when ERROR, or what a
+  // PENDING or BACKFILLING table waits for.
   string message = 6;
 
   enum State {

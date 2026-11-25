@@ -785,6 +785,7 @@ service OperatorService {
   //   existing records contain null values for it. The error carries a
   //   google.rpc.PreconditionFailure detail with violation type
   //   "REQUIRED_FIELD_HAS_NULL_VALUES" and the field name as subject.
+  // - Aborted: another apply changed the type while this one was running; apply again
   rpc UpdateTailorDBType(UpdateTailorDBTypeRequest) returns (UpdateTailorDBTypeResponse) {}
 
   // DeleteTailorDBType deletes a TailorDB type.
@@ -981,6 +982,20 @@ service OperatorService {
   rpc GetTailorDBReplicationStatus(GetTailorDBReplicationStatusRequest) returns (GetTailorDBReplicationStatusResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  // RepairTailorDBReplication rewrites tables of a replication from their
+  // types' records. With no type names it repairs the tables in ERROR, such as
+  // a table deleted or replaced in the destination; with type names, those
+  // types' tables in any state but PENDING or BACKFILLING, which a repair
+  // already awaits or runs. The tables go to PENDING, and their repair starts
+  // shortly after.
+  //
+  // [Errors]
+  // - InvalidArgument: request is invalid, or a type is not replicated
+  // - NotFound: replication does not exist or can not be accessed
+  // - FailedPrecondition: the replication is disabled, or its destination is
+  //   not ACTIVE
+  rpc RepairTailorDBReplication(RepairTailorDBReplicationRequest) returns (RepairTailorDBReplicationResponse) {}
 
   // Pipeline --------------------------------------------------------
 
