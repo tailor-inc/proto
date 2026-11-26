@@ -883,6 +883,7 @@ service OperatorService {
   // - FailedPrecondition: replication is not available
   // - ResourceExhausted: the workspace reached its destination limit
   // - Aborted: a concurrent change released the replication service account; retry
+  // - PermissionDenied: TailorDB replication isn't enabled for the workspace
   rpc CreateTailorDBReplicationDestination(CreateTailorDBReplicationDestinationRequest) returns (CreateTailorDBReplicationDestinationResponse) {}
 
   // GetTailorDBReplicationDestination returns a destination with its grant status.
@@ -933,6 +934,7 @@ service OperatorService {
   //   a field or the destination does not exist, or another replication already
   //   writes one of the tables
   // - ResourceExhausted: the workspace reached its replication or replicated-type limit
+  // - PermissionDenied: TailorDB replication isn't enabled for the workspace
   rpc CreateTailorDBReplication(CreateTailorDBReplicationRequest) returns (CreateTailorDBReplicationResponse) {}
 
   // GetTailorDBReplication returns a replication.
@@ -963,6 +965,7 @@ service OperatorService {
   // - FailedPrecondition: a type, a field or the destination does not exist,
   //   or another replication already writes one of the tables
   // - ResourceExhausted: the workspace reached its replicated-type limit
+  // - PermissionDenied: enabling a disabled replication while TailorDB replication isn't enabled for the workspace
   rpc UpdateTailorDBReplication(UpdateTailorDBReplicationRequest) returns (UpdateTailorDBReplicationResponse) {}
 
   // DeleteTailorDBReplication stops a replication. Data already replicated to
